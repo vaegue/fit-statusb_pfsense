@@ -15,3 +15,58 @@ socat - UNIX-CONNECT:/var/run/dpinger_WAN_DHCP~192.168.192.128~192.168.192.2.soc
 
 # interesting
 /usr/local/bin/ping_hosts.sh
+
+
+
+# RRD constructinon script (/var/db/rrd/updaterrd.sh)
+
+# Gateway quality graphs
+for sock in /var/run/dpinger_*.sock; do
+        if [ ! -S "$sock" ]; then
+                continue
+        fi
+
+        t=$(/usr/bin/nc -U $sock)
+        if [ -z "$t" ]; then
+                continue
+        fi
+
+        gw=$(echo "$t" | awk '{ print $1 }')
+        delay=$(echo "$t" | awk '{ print $2 }')
+        stddev=$(echo "$t" | awk '{ print $3 }')
+        loss=$(echo "$t" | awk '{ print $4 }')
+
+        if echo "$loss" | grep -Eqv '^[0-9]+$'; then
+                loss="U"
+        fi
+        if echo "$delay" | grep -Eqv '^[0-9]+$'; then
+                delay="U"
+        else
+                # Convert delay from microseconds to seconds
+                delay=$(echo "scale=7; $delay / 1000 / 1000" | /usr/bin/bc)
+        fi
+        if echo "$stddev" | grep -Eqv '^[0-9]+$'; then
+                stddev="U"
+        else
+                # Convert stddev from microseconds to seconds
+                stddev=$(echo "scale=7; $stddev / 1000 / 1000" | /usr/bin/bc)
+        fi
+
+        if [ ! -f /var/db/rrd/$gw-quality.rrd ]; then
+                /usr/bin/nice -n20 /usr/local/bin/rrdtool create /var/db/rrd/$gw-quality.rrd --step 60 \
+                DS:loss:GAUGE:120:0:100 \
+                DS:delay:GAUGE:120:0:100000 \
+                DS:stddev:GAUGE:120:0:100000 \
+                RRA:AVERAGE:0.5:1:1200 \
+                RRA:AVERAGE:0.5:5:720 \
+                RRA:AVERAGE:0.5:60:1860 \
+                RRA:AVERAGE:0.5:1440:2284
+
+                /usr/bin/nice -n20 /usr/local/bin/rrdtool update /var/db/rrd/$gw-quality.rrd -t loss:delay:stddev N:U:U:U
+        fi
+
+        /usr/bin/nice -n20 /usr/local/bin/rrdtool update /var/db/rrd/$gw-quality.rrd -t loss:delay:stddev N:$loss:$delay:$std
+dev
+done
+sleep 60
+done
