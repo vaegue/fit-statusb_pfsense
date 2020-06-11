@@ -1,5 +1,7 @@
 #!/bin/sh
 # prototype. needs revision and cleanup
+# TODO:
+#   Figure out where how to start this 'gracefully' on pfsense
 
 echo "#000000" > /dev/cuaU0
 while true; do
