@@ -3,6 +3,8 @@ Nevermind, can just echo directly to the com port.
 
 pkg add socat
 socat - UNIX-CONNECT:/var/run/dpinger_WAN_DHCP~192.168.192.128~192.168.192.2.sock
+# nc is included, don't need socat
+nc -U /var/run/dpinger_WAN_DHCP~192.168.192.128~192.168.192.2.sock
 
 # {gw_name} {lat_ave} {lat_std_dev} {loss}
 # WAN_DHCP 1168 613 0
