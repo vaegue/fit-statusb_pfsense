@@ -7,10 +7,11 @@ socat - UNIX-CONNECT:/var/run/dpinger_WAN_DHCP~192.168.192.128~192.168.192.2.soc
 # {gw_name} {lat_ave} {lat_std_dev} {loss}
 # WAN_DHCP 1168 613 0
 
-#something related to dpinger
+# something related to dpinger
+# might have info on how to target the dpinger socket
 /etc/inc/gwlb.inc
-#something related to LEDs
+# something related to LEDs
 /etc/inc/led.inc
 
-#interesting
+# interesting
 /usr/local/bin/ping_hosts.sh
