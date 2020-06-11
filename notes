@@ -9,3 +9,5 @@ socat - UNIX-CONNECT:/var/run/dpinger_WAN_DHCP~192.168.192.128~192.168.192.2.soc
 
 #something related to dpinger
 /etc/inc/gwlb.inc
+#something related to LEDs
+/etc/inc/led.inc
