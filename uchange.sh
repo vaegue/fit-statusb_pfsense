@@ -1,5 +1,5 @@
 #!/bin/sh
-
+# prototype. needs revision and cleanup
 
 echo "#000000" > /dev/cuaU0
 while true; do
