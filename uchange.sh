@@ -16,7 +16,7 @@ blue=0000FF
 off=000000
 white=FFFFFF
 
-echo "#${off}" > $serial
+echo "#$off" > $serial
 while true; do
         sleep 5
         # This loop won't work well if there are two gateways (might include ipv4/6)
@@ -26,7 +26,7 @@ while true; do
 
                 if [ ! -S "$sock" ]; then
                         echo "no-s: $sock"
-                        echo "B#${white}-0100#ffff00" > $serial
+                        echo "B#$white-0100#ffff00" > $serial
                         continue
                 fi
 
@@ -46,9 +46,9 @@ while true; do
                 else
                         echo "Loss: $loss"
                         if [ $loss -lt 10 ]; then
-                                echo "#${green}" > $serial
+                                echo "#$green" > $serial
                         else
-                                echo "#${red}" > $serial
+                                echo "#$red" > $serial
                         fi
                 fi
         done
