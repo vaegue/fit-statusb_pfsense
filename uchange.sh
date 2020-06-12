@@ -1,5 +1,6 @@
 #!/bin/sh
 # prototype. needs revision and cleanup
+# some code jacked from "/var/db/rrd/updaterrd.sh" on pfSense
 # TODO:
 #   Figure out where how to start this 'gracefully' on pfsense
 #   Save some kind of stat to avoid re-sending same command
