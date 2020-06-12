@@ -16,6 +16,11 @@ blue=0000FF
 off=000000
 white=FFFFFF
 
+set_color() {
+        inarg=$1
+        echo "$inarg to led" > $serial
+}
+
 echo "#$off" > $serial
 while true; do
         sleep 5
@@ -27,7 +32,8 @@ while true; do
                 # Is the dpinger file there and a socket?
                 if [ ! -S "$sock" ]; then
                         echo "no dpinger file: $sock"
-                        echo "B#$white-0100#ffff00" > $serial
+                        #echo "B#$white-0100#ffff00" > $serial
+                        set_color "B#$white-0100#ffff00"
                         continue
                 fi
 
@@ -44,13 +50,16 @@ while true; do
                 # is loss a number?
                 if echo "$loss" | grep -Eqv '^[0-9]+$'; then
                         loss="U"
-                        echo "B#FFFF00-0100#00FFFF" > $serial
+                        #echo "B#ffff00-0100#00ffff" > $serial
+                        set_color "B#ffff00-0100#00ffff"
                 else
                         echo "Loss: $loss"
                         if [ $loss -lt 10 ]; then
-                                echo "#$green" > $serial
+                                #echo "#$green" > $serial
+                                set_color "$green"
                         else
-                                echo "#$red" > $serial
+                                #echo "#$red" > $serial
+                                set_color "$red"
                         fi
                 fi
         done
