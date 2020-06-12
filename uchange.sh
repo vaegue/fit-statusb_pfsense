@@ -18,7 +18,8 @@ white=FFFFFF
 
 set_color() {
         inarg=$1
-        echo "$inarg to led" > $serial
+        echo "$inarg to led"
+        echo "$inarg" > $serial
 }
 
 while true; do
