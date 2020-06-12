@@ -8,7 +8,7 @@ $serial=/dev/cuaU0
 echo "#000000" > $serial
 while true; do
         sleep 5
-        # This won't work well if there are two gateways (might include ipv4/6)
+        # This loop won't work well if there are two gateways (might include ipv4/6)
         for sock in /var/run/dpinger_*.sock; do
                 echo "entering loop"
         #       sock=$(/var/run/dpinger_*.sock)
