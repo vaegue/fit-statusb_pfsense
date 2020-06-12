@@ -41,10 +41,10 @@ while true; do
 
                 loss=$(echo "$t" | awk '{ print $4 }')
 
-                echo "setloss: $loss"
+                # is loss a number?
                 if echo "$loss" | grep -Eqv '^[0-9]+$'; then
                         loss="U"
-                        echo "#ffff00" > $serial
+                        echo "B#FFFF00-0100#00FFFF" > $serial
                 else
                         echo "Loss: $loss"
                         if [ $loss -lt 10 ]; then
