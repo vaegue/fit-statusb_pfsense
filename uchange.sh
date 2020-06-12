@@ -21,8 +21,8 @@ set_color() {
         echo "$inarg to led" > $serial
 }
 
-echo "#$off" > $serial
 while true; do
+        if [ -c "$serial"]
         sleep 5
         # This loop won't work well if there are two gateways (might include ipv4/6)
         for sock in /var/run/dpinger_*.sock; do
@@ -54,7 +54,7 @@ while true; do
                         set_color "B#ffff00-0100#00ffff"
                 else
                         echo "Loss: $loss"
-                        if [ $loss -lt 10 ]; then
+                        if [ "$loss" -lt 10 ]; then
                                 #echo "#$green" > $serial
                                 set_color "$green"
                         else
