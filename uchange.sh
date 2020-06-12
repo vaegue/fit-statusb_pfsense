@@ -22,7 +22,10 @@ set_color() {
 }
 
 while true; do
-        if [ -c "$serial"]
+        if [ ! -c "$serial"]; then
+                continue
+        fi
+
         sleep 5
         # This loop won't work well if there are two gateways (might include ipv4/6)
         for sock in /var/run/dpinger_*.sock; do
