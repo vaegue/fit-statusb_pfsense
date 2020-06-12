@@ -1,5 +1,6 @@
 #!/bin/sh
-# prototype. needs revision and cleanup
+# PROTOTYPE: script to manipulate fit-statusb usb led on pfSense
+# #dirtyhack
 # some code jacked from "/var/db/rrd/updaterrd.sh" on pfSense
 # TODO:
 #   Figure out where how to start this 'gracefully' on pfsense
