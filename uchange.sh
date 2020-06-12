@@ -8,7 +8,7 @@
 
 # This may collide with serial port used to access console over serial.
 # Don't have hardware to check.
-serial=/dev/cuaU0
+serial="/dev/cuaU0"
 
 red="#FF0000"
 green="#00FF00"
