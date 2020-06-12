@@ -22,7 +22,7 @@ set_color() {
 }
 
 while true; do
-        if [ ! -c "$serial"]; then
+        if [ ! -c "$serial" ]; then
                 continue
         fi
 
