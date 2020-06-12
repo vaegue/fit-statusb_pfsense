@@ -4,7 +4,8 @@
 #   Figure out where how to start this 'gracefully' on pfsense
 #   Save some kind of stat to avoid re-sending same command
 
-# This may collide with serial port used to access console over serial. don't have hardware to check.
+# This may collide with serial port used to access console over serial.
+# Don't have hardware to check.
 $serial=/dev/cuaU0
 
 echo "#000000" > $serial
