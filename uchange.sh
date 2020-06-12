@@ -10,6 +10,12 @@
 # Don't have hardware to check.
 $serial=/dev/cuaU0
 
+$red=FF0000
+$green=00FF00
+$blue=0000FF
+$off=000000
+$white=FFFFFF
+
 echo "#000000" > $serial
 while true; do
         sleep 5
