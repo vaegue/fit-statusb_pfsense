@@ -8,13 +8,13 @@
 
 # This may collide with serial port used to access console over serial.
 # Don't have hardware to check.
-$serial=/dev/cuaU0
+serial=/dev/cuaU0
 
-$red=FF0000
-$green=00FF00
-$blue=0000FF
-$off=000000
-$white=FFFFFF
+red=FF0000
+green=00FF00
+blue=0000FF
+off=000000
+white=FFFFFF
 
 echo "#${off}" > $serial
 while true; do
