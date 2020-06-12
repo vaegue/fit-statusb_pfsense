@@ -24,16 +24,18 @@ while true; do
                 echo "entering loop"
         #       sock=$(/var/run/dpinger_*.sock)
 
+                # Is the dpinger file there and a socket?
                 if [ ! -S "$sock" ]; then
-                        echo "no-s: $sock"
+                        echo "no dpinger file: $sock"
                         echo "B#$white-0100#ffff00" > $serial
                         continue
                 fi
 
                 t=$(/usr/bin/nc -U $sock)
 
+                # Nothing in the socket, move along.
                 if [ -z "$t" ]; then
-                        echo "-z $t"
+                        echo "nothing in socket $t"
                         continue
                 fi
 
