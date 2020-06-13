@@ -1,0 +1,229 @@
+#echo "B#000000-100#5c0012\n~." | /usr/bin/cu -l /dev/cuaU0 -s 9600
+Nevermind, can just echo directly to the com port.
+
+pkg add socat
+socat - UNIX-CONNECT:/var/run/dpinger_WAN_DHCP~192.168.192.128~192.168.192.2.sock
+# nc is included, don't need socat
+nc -U /var/run/dpinger_WAN_DHCP~192.168.192.128~192.168.192.2.sock
+
+# {gw_name} {lat_ave} {lat_std_dev} {loss}
+# WAN_DHCP 1168 613 0
+
+# something related to dpinger
+# might have info on how to target the dpinger socket
+/etc/inc/gwlb.inc
+# something related to LEDs
+/etc/inc/led.inc
+
+# interesting
+/usr/local/bin/ping_hosts.sh
+
+
+
+# RRD constructinon script (/var/db/rrd/updaterrd.sh)
+
+# Gateway quality graphs
+for sock in /var/run/dpinger_*.sock; do
+        if [ ! -S "$sock" ]; then
+                continue
+        fi
+
+        t=$(/usr/bin/nc -U $sock)
+        if [ -z "$t" ]; then
+                continue
+        fi
+
+        gw=$(echo "$t" | awk '{ print $1 }')
+        delay=$(echo "$t" | awk '{ print $2 }')
+        stddev=$(echo "$t" | awk '{ print $3 }')
+        loss=$(echo "$t" | awk '{ print $4 }')
+
+        if echo "$loss" | grep -Eqv '^[0-9]+$'; then
+                loss="U"
+        fi
+        if echo "$delay" | grep -Eqv '^[0-9]+$'; then
+                delay="U"
+        else
+                # Convert delay from microseconds to seconds
+                delay=$(echo "scale=7; $delay / 1000 / 1000" | /usr/bin/bc)
+        fi
+        if echo "$stddev" | grep -Eqv '^[0-9]+$'; then
+                stddev="U"
+        else
+                # Convert stddev from microseconds to seconds
+                stddev=$(echo "scale=7; $stddev / 1000 / 1000" | /usr/bin/bc)
+        fi
+
+        if [ ! -f /var/db/rrd/$gw-quality.rrd ]; then
+                /usr/bin/nice -n20 /usr/local/bin/rrdtool create /var/db/rrd/$gw-quality.rrd --step 60 \
+                DS:loss:GAUGE:120:0:100 \
+                DS:delay:GAUGE:120:0:100000 \
+                DS:stddev:GAUGE:120:0:100000 \
+                RRA:AVERAGE:0.5:1:1200 \
+                RRA:AVERAGE:0.5:5:720 \
+                RRA:AVERAGE:0.5:60:1860 \
+                RRA:AVERAGE:0.5:1440:2284
+
+                /usr/bin/nice -n20 /usr/local/bin/rrdtool update /var/db/rrd/$gw-quality.rrd -t loss:delay:stddev N:U:U:U
+        fi
+
+        /usr/bin/nice -n20 /usr/local/bin/rrdtool update /var/db/rrd/$gw-quality.rrd -t loss:delay:stddev N:$loss:$delay:$std
+dev
+done
+sleep 60
+done
+
+# from fit-statusb forum
+if ($CPU_Temp <= 30){
+$CPU_Temp_Color = '#0000FF';
+$port -> write("#0000FF\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 30 && $CPU_Temp <= 32){
+$CPU_Temp_Color = '#0079FF';
+$port -> write("#0079FF\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 32 && $CPU_Temp <= 34){
+$CPU_Temp_Color = '#00FFFA';
+$port -> write("#00FFFA\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 34 && $CPU_Temp <= 36){
+$CPU_Temp_Color = '#00FF67';
+$port -> write("#00FF67\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 36 && $CPU_Temp <= 38){
+$CPU_Temp_Color = '#00FF00';
+$port -> write("#00FF00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 38 && $CPU_Temp <= 40){
+$CPU_Temp_Color = '#37FF00';
+$port -> write("#37FF00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 40 && $CPU_Temp <= 42){
+$CPU_Temp_Color = '#85FF00';
+$port -> write("#85FF00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 42 && $CPU_Temp <= 44){
+$CPU_Temp_Color = '#BEFF00';
+$port -> write("#BEFF00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 44 && $CPU_Temp <= 46){
+$CPU_Temp_Color = '#FFFF00';
+$port -> write("#FFFF00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 46 && $CPU_Temp <= 48){
+$CPU_Temp_Color = '#FFEB00';
+$port -> write("#FFEB00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 48 && $CPU_Temp <= 50){
+$CPU_Temp_Color = '#FFDA00';
+$port -> write("#FFDA00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 50 && $CPU_Temp <= 52){
+$CPU_Temp_Color = '#FFCC00';
+$port -> write("#FFCC00\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 52 && $CPU_Temp <= 54){
+$CPU_Temp_Color = '#FFA500';
+$port -> write("#FFA500\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 54 && $CPU_Temp <= 56){
+$CPU_Temp_Color = '#FF8800';
+$port -> write("#FF8800\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 56 && $CPU_Temp <= 58){
+$CPU_Temp_Color = '#FF6500';
+$port -> write("#FF6500\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 58 && $CPU_Temp <= 60){
+$CPU_Temp_Color = '#FF3700';
+$port -> write("#FF3700\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 60 && $CPU_Temp <= 62){
+$CPU_Temp_Color = '#FF0000';
+$port -> write("#FF0000\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 62 && $CPU_Temp <= 64){
+$CPU_Temp_Color = '#FF003E';
+$port -> write("#FF003E\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 64 && $CPU_Temp <= 66){
+$CPU_Temp_Color = '#FF0097';
+$port -> write("#FF0097\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 66 && $CPU_Temp <= 68){
+$CPU_Temp_Color = '#FF00BD';
+$port -> write("#FF00BD\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+elsif ($CPU_Temp > 68 && $CPU_Temp <= 70){
+$CPU_Temp_Color = '#FF00CA';
+$port -> write("#FF00CA\n");
+$port -> purge_rx;
+sleep($delay);
+}
+
+else {
+$CPU_Temp_Color = '#FFB6F5';
+$port -> write("#FFB6F5\n");
+$port -> purge_rx;
+sleep($delay);
+}
