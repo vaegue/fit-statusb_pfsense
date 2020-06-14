@@ -5,8 +5,9 @@
 import serial
 import time
 
-
-ser = serial.Serial('COM3', 9600, parity=serial.PARITY_EVEN, timeout=5)
+# Windows machine
+#ser = serial.Serial('COM3', 9600, parity=serial.PARITY_EVEN, timeout=5)
+ser = serial.Serial('/dev/ttyACM0', 9600, parity=serial.PARITY_EVEN, timeout=5)
 
 #output = ser.read(100)
 #print(curcolor)
