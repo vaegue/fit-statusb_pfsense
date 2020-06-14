@@ -16,6 +16,8 @@ def setcolor(incolor):
 #    print(incolor+b'\n')
     ser.write(incolor+b'\n')
     #time.sleep(.1)
+    # This seems to be the only reliable way to clear the input buffer
+    # Probably because it's a usb->serial
     ser.read_all()
     return(incolor)
 
@@ -35,9 +37,10 @@ while 1:
         setcolor(b'B#ffff00-0001#ff00ff')
     
     counter = counter + 1
-
+    #print('IN: {inw}, OUT: {outw}, MAXIN: {maxin} CNT: {cnt}'.format(inw=ser.in_waiting,maxin=maxinwait , outw=ser.out_waiting, cnt=counter))
     if (ser.in_waiting > 0):
         if (ser.in_waiting > maxinwait):
             maxinwait = ser.in_waiting
 
         print('IN: {inw}, OUT: {outw}, MAXIN: {maxin} CNT: {cnt}'.format(inw=ser.in_waiting,maxin=maxinwait , outw=ser.out_waiting, cnt=counter))
+    
