@@ -43,4 +43,4 @@ while 1:
             maxinwait = ser.in_waiting
 
         print('IN: {inw}, OUT: {outw}, MAXIN: {maxin} CNT: {cnt}'.format(inw=ser.in_waiting,maxin=maxinwait , outw=ser.out_waiting, cnt=counter))
-        print(ser.read_all)
+        print(ser.readline())
