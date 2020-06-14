@@ -44,3 +44,4 @@ while 1:
 
         print('IN: {inw}, OUT: {outw}, MAXIN: {maxin} CNT: {cnt}'.format(inw=ser.in_waiting,maxin=maxinwait , outw=ser.out_waiting, cnt=counter))
         print(ser.readline())
+        print('IN: {inw}, OUT: {outw}, MAXIN: {maxin} CNT: {cnt}'.format(inw=ser.in_waiting,maxin=maxinwait , outw=ser.out_waiting, cnt=counter))
