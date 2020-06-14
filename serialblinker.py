@@ -1,3 +1,7 @@
+# troubleshoot blinker freezing.
+# turns out you have to manually clear the input buffer
+# otherwise it seems to fill up and causes device to stop working until unplug/plug
+
 import serial
 import time
 
