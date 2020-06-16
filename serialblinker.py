@@ -26,6 +26,7 @@ def setcolor(incolor):
     ser.read_all()
     return(incolor)
 
+
 curcolor = setcolor(b'#ff0000')
 counter = 0
 maxinwait = 0
