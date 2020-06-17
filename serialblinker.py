@@ -13,9 +13,13 @@ configfile = "config.ini"
 # device = serialport
 
 config = configparser.ConfigParser()
-config.read(configfile)
+try:
+    config.read(configfile)
+    dev = config['serial']['device']
+except:
+    dev = "/dev/cuaU0"
 
-ser = serial.Serial(config['serial']['device'], 9600, parity=serial.PARITY_EVEN, timeout=5)
+ser = serial.Serial(dev, 9600, parity=serial.PARITY_EVEN, timeout=5)
 
 # output = ser.read(100)
 # print(curcolor)
