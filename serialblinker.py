@@ -13,6 +13,9 @@ import configparser
 # FreeBSD
 # device = '/dev/cuaU0'
 configfile = "config.ini"
+# -- config.ini --
+# [serial]
+# device = serialport
 
 config = configparser.ConfigParser()
 config.read(configfile)
