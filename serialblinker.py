@@ -6,6 +6,7 @@ import serial
 import time
 import configparser
 
+# TODO: make sure file exists and contains valid data, else default to something
 configfile = "config.ini"
 # -- config.ini --
 # [serial]
@@ -14,7 +15,7 @@ configfile = "config.ini"
 config = configparser.ConfigParser()
 config.read(configfile)
 
-ser = serial.Serial(config.get('serial', 'device'), 9600, parity=serial.PARITY_EVEN, timeout=5)
+ser = serial.Serial(config['serial']['device'], 9600, parity=serial.PARITY_EVEN, timeout=5)
 
 # output = ser.read(100)
 # print(curcolor)
