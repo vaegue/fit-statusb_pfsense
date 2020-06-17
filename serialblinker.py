@@ -17,7 +17,8 @@ try:
     config.read(configfile)
     dev = config['serial']['device']
 except:
-    dev = "/dev/cuaU0"
+    # Default to windows com port for testing
+    dev = "COM3"
 
 ser = serial.Serial(dev, 9600, parity=serial.PARITY_EVEN, timeout=5)
 
