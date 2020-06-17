@@ -15,10 +15,18 @@ config = configparser.ConfigParser()
 try:
     config.read(configfile)
     dev = config['serial']['device']
-except:
-    # Default to windows com port for testing
+except KeyError:
+    # Default to windows COM3 for testing
     dev = "COM3"
+    print(f'Could not find config file {configfile}. Defaulting to {dev}')
+except:
+    # WTF happened?
+    template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+    message = template.format(type(ex).__name__, ex.args)
+    print(message)
+    raise SystemExit("Unknown error, see above")
 
+print(f'Using device: {dev} found in {configfile}')
 ser = serial.Serial(dev, 9600, parity=serial.PARITY_EVEN, timeout=5)
 
 # output = ser.read(100)
