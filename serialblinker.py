@@ -4,14 +4,20 @@
 
 import serial
 import time
+import configparser
 
 # Windows machine
 # device = 'COM3'
 # Linux machine
 # device = '/dev/ttyACM0'
 # FreeBSD
-device = '/dev/cuaU0'
-ser = serial.Serial(device, 9600, parity=serial.PARITY_EVEN, timeout=5)
+# device = '/dev/cuaU0'
+configfile = "config.ini"
+
+config = configparser.ConfigParser()
+config.read(configfile)
+
+ser = serial.Serial(config.get('serial', 'device'), 9600, parity=serial.PARITY_EVEN, timeout=5)
 
 # output = ser.read(100)
 # print(curcolor)
