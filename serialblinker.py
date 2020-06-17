@@ -6,7 +6,6 @@ import serial
 import time
 import configparser
 
-# TODO: make sure file exists and contains valid data, else default to something
 configfile = "config.ini"
 # -- config.ini --
 # [serial]
