@@ -6,12 +6,6 @@ import serial
 import time
 import configparser
 
-# Windows machine
-# device = 'COM3'
-# Linux machine
-# device = '/dev/ttyACM0'
-# FreeBSD
-# device = '/dev/cuaU0'
 configfile = "config.ini"
 # -- config.ini --
 # [serial]
