@@ -20,7 +20,7 @@ while True:
             print("receiving...")
             data = client.recv(32)
             if data:
-        #        print(f'received: {}'.format(data))
+                # print(f'received: {}'.format(data))
                 print(len(data))
                 print(data)
             else:
@@ -34,4 +34,3 @@ while True:
     finally:
         print("closing connection")
         client.close()
-   
