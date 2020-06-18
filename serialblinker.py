@@ -18,7 +18,7 @@ try:
 except KeyError:
     # Default to windows COM3 for testing
     dev = "COM3"
-    print(f'Could not find config file {configfile}. Defaulting to {dev}')
+    print(f'Could not find valid config in {configfile}. Defaulting to {dev}')
 except Exception as ex:
     # WTF happened?
     template = "An exception of type {0} occurred. Arguments:\n{1!r}"
