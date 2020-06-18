@@ -1,12 +1,16 @@
 import socket
 import os
 import time
+import glob
 
-sockpath = "/var/run/dpinger_test.sock"
+polltime = 1
+sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
+
+# sockpath = "/var/run/dpinger_test.sock"
 print("Connecting")
 while True:
-    time.sleep(5)
-    if os.path.exists(sockpath):
+    time.sleep(polltime)
+    if os.path.exists(sockpath[0]):
         client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     else:
         print("couldn't connect")
@@ -14,7 +18,7 @@ while True:
 
     try:
         print("Trying to connect")
-        client.connect(sockpath)
+        client.connect(sockpath[0])
 
         while True:
             print("receiving...")
@@ -34,3 +38,4 @@ while True:
     finally:
         print("closing connection")
         client.close()
+
