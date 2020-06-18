@@ -24,9 +24,12 @@ while True:
             print("receiving...")
             data = client.recv(32)
             if data:
-                # print(f'received: {}'.format(data))
-                print(len(data))
-                print(data)
+                # {gw_name} {lat_ave} {lat_std_dev} {loss}
+                # WAN_DHCP 1168 613 0
+                # b'WAN_DHCP 1168 613 0\n'
+                result = dict(zip(('gw_name', 'lat_ave', 'stdev', 'loss'), data.decode().split()))
+                for k in result:
+                    print(result[k])
             else:
                 print("No data")
                 break
