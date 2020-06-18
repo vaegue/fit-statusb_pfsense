@@ -17,11 +17,11 @@ while True:
         raise SystemExit("whatever")
 
     try:
-        print("Trying to connect")
+        # print("Trying to connect")
         client.connect(sockpath[0])
 
         while True:
-            print("receiving...")
+            # print("receiving...")
             data = client.recv(32)
             if data:
                 # {gw_name} {lat_ave} {lat_std_dev} {loss}
@@ -29,7 +29,7 @@ while True:
                 # b'WAN_DHCP 1168 613 0\n'
                 result = dict(zip(('gw_name', 'lat_ave', 'stdev', 'loss'), data.decode().split()))
                 for k in result:
-                    print(result[k])
+                    print(f'{k}: {result[k]}')
             else:
                 print("No data")
                 break
