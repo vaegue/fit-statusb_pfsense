@@ -22,7 +22,7 @@ while True:
 
         while True:
             # print("receiving...")
-            data = client.recv(32)
+            data = client.recv(64)
             if data:
                 # {gw_name} {lat_ave} {lat_std_dev} {loss}
                 # WAN_DHCP 1168 613 0
