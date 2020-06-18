@@ -25,9 +25,9 @@ except Exception as ex:
     message = template.format(type(ex).__name__, ex.args)
     print(message)
     raise SystemExit("Unknown error, see above")
-else:
-    print(f'Using device: {dev} found in {configfile}')
-    ser = serial.Serial(dev, 9600, parity=serial.PARITY_EVEN, timeout=5)
+
+print(f'Using device: {dev} found in {configfile}')
+ser = serial.Serial(dev, 9600, parity=serial.PARITY_EVEN, timeout=5)
 
 
 # output = ser.read(100)
