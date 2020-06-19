@@ -45,8 +45,7 @@ while True:
                 # b'WAN_DHCP 1168 613 0\n'
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
                 # TODO: do something. remove test print
-                for k in dping_res:
-                    print(f'{k}: {dping_res[k]}')
+                print(f"loss: {dping_res['loss']}")
             else:
                 # No data, move along
                 break
