@@ -29,16 +29,16 @@ pollinterval = 1
 while True:
     time.sleep(pollinterval)
     if os.path.exists(sockpath[0]):
-        sock_con = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     else:
         msg = f'Could not connect to {sockpath[0]}'
         print(msg)
         raise SystemExit(msg)
 
     try:
-        sock_con.connect(sockpath[0])
+        sockcon.connect(sockpath[0])
         while True:
-            sockdata = sock_con.recv(64)
+            sockdata = sockcon.recv(64)
             if sockdata:
                 # {gw_name} {lat_ave} {lat_std_dev} {loss}
                 # WAN_DHCP 1168 613 0
@@ -54,4 +54,4 @@ while True:
         print(f'Socket error:\n\t{msg}')
 
     finally:
-        sock_con.close()
+        sockcon.close()
