@@ -26,6 +26,14 @@ sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
 pollinterval = 1
 
+
+def setcolor(incolor, device):
+    # Placeholder
+    # TODO: send color to serial port
+    print(f'Color: {incolor}')
+    print(f'Dev: {device}')
+
+
 while True:
     time.sleep(pollinterval)
     if os.path.exists(sockpath[0]):
