@@ -31,13 +31,15 @@ def setcolor(incolor, device):
     # TODO: do something smart so the color only gets sent when it needs to change
     # maybe this should be a class?
     print(f'Color: {incolor}')
-    print(f'Dev: {device}')
+    # print(f'Dev: {device}')
     colorstring = incolor+'\n'
     ser = serial.Serial(device, 9600, parity=serial.PARITY_EVEN, timeout=1)
     ser.write(colorstring.encode())
     ser.read_all()
     ser.close()
 
+
+count = 0
 
 while True:
     time.sleep(pollinterval)
@@ -65,11 +67,13 @@ while True:
                 elif(1 < dping_loss < 10):
                     setcolor('#da1600', serialdev)
                 elif(10 < dping_loss < 30):
-                    setcolor('##da0800', serialdev)
+                    setcolor('#da0800', serialdev)
                 elif(dping_loss > 30):
                     setcolor('#ff0000', serialdev)
                 else:
                     setcolor('should not happen', serialdev)
+                count = count + 1
+                print(f'Count: {count}')
             else:
                 # No data, move along
                 break
