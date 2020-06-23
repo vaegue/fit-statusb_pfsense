@@ -58,13 +58,15 @@ while True:
                 # b'WAN_DHCP 1168 613 0\n'
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
                 print(f"loss: {dping_res['loss']}")
-                if (int(dping_res['loss']) == 0):
+                # We only really care about loss for now
+                dping_loss = int(dping_res['loss'])
+                if (dping_loss == 0):
                     setcolor('#00ff00', serialdev)
-                elif(1 < int(dping_res['loss']) < 10):
+                elif(1 < dping_loss < 10):
                     setcolor('#da0800', serialdev)
-                elif(10 < int(dping_res['loss']) < 30):
+                elif(10 < dping_loss < 30):
                     setcolor('#da1600', serialdev)
-                elif(int(dping_res['loss']) > 30):
+                elif(dping_loss > 30):
                     setcolor('#ff0000', serialdev)
                 else:
                     setcolor('should not happen', serialdev)
