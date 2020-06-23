@@ -28,6 +28,8 @@ pollinterval = 1
 
 
 def setcolor(incolor, device):
+    # TODO: do something smart so the color only gets sent when it needs to change
+    # maybe this should be a class?
     print(f'Color: {incolor}')
     print(f'Dev: {device}')
     colorstring = incolor+'\n'
@@ -60,7 +62,7 @@ while True:
                     setcolor('#00ff00', serialdev)
                 elif(1 < int(dping_res['loss']) < 10):
                     setcolor('#da0800', serialdev)
-                elif(11 < int(dping_res['loss']) < 30):
+                elif(10 < int(dping_res['loss']) < 30):
                     setcolor('#da1600', serialdev)
                 elif(int(dping_res['loss']) > 30):
                     setcolor('#ff0000', serialdev)
