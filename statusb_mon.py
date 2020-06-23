@@ -63,9 +63,9 @@ while True:
                 if (dping_loss == 0):
                     setcolor('#00ff00', serialdev)
                 elif(1 < dping_loss < 10):
-                    setcolor('#da0800', serialdev)
-                elif(10 < dping_loss < 30):
                     setcolor('#da1600', serialdev)
+                elif(10 < dping_loss < 30):
+                    setcolor('##da0800', serialdev)
                 elif(dping_loss > 30):
                     setcolor('#ff0000', serialdev)
                 else:
