@@ -54,6 +54,16 @@ while True:
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
                 # TODO: do something. remove test print
                 print(f"loss: {dping_res['loss']}")
+                if (int(dping_res['loss']) == 0):
+                    setcolor('no loss', serialdev)
+                elif(1 < int(dping_res['loss']) < 10):
+                    setcolor('1 to 10', serialdev)
+                elif(11 < int(dping_res['loss']) < 30):
+                    setcolor('11 to 30', serialdev)
+                elif(int(dping_res['loss']) > 30):
+                    setcolor('over 30', serialdev)
+                else:
+                    setcolor('should not happen', serialdev)
             else:
                 # No data, move along
                 break
