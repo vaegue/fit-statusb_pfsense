@@ -28,8 +28,6 @@ pollinterval = 1
 
 
 def setcolor(incolor, device):
-    # Placeholder
-    # TODO: send color to serial port
     print(f'Color: {incolor}')
     print(f'Dev: {device}')
     colorstring = incolor+'\n'
@@ -57,7 +55,6 @@ while True:
                 # WAN_DHCP 1168 613 0
                 # b'WAN_DHCP 1168 613 0\n'
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
-                # TODO: do something. remove test print
                 print(f"loss: {dping_res['loss']}")
                 if (int(dping_res['loss']) == 0):
                     setcolor('#00ff00', serialdev)
