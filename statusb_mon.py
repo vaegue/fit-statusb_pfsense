@@ -24,7 +24,7 @@ serialdev = '/dev/cuaU0'
 # TODO: What to do about multiple WANs?
 sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
-pollinterval = 1
+pollinterval = .5
 
 
 def setcolor(incolor, device):
@@ -79,7 +79,8 @@ while True:
                 break
 
     except socket.error as msg:
-        print(f'Socket error:\n\t{msg}')
+        print(f'Socket error ({count}):\n\t{msg}')
+        raise SystemExit(1)
 
     finally:
         sockcon.close()
