@@ -32,6 +32,11 @@ def setcolor(incolor, device):
     # TODO: send color to serial port
     print(f'Color: {incolor}')
     print(f'Dev: {device}')
+    colorstring = incolor+'\n'
+    ser = serial.Serial(device, 9600, parity=serial.PARITY_EVEN, timeout=1)
+    ser.write(colorstring.encode())
+    ser.read_all()
+    ser.close()
 
 
 while True:
@@ -55,13 +60,13 @@ while True:
                 # TODO: do something. remove test print
                 print(f"loss: {dping_res['loss']}")
                 if (int(dping_res['loss']) == 0):
-                    setcolor('no loss', serialdev)
+                    setcolor('#00ff00', serialdev)
                 elif(1 < int(dping_res['loss']) < 10):
-                    setcolor('1 to 10', serialdev)
+                    setcolor('#da0800', serialdev)
                 elif(11 < int(dping_res['loss']) < 30):
-                    setcolor('11 to 30', serialdev)
+                    setcolor('#da1600', serialdev)
                 elif(int(dping_res['loss']) > 30):
-                    setcolor('over 30', serialdev)
+                    setcolor('#ff0000', serialdev)
                 else:
                     setcolor('should not happen', serialdev)
             else:
