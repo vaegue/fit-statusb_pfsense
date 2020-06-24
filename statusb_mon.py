@@ -47,6 +47,7 @@ class FitStatUSB:
         self.color = None
         self.dur = None
         self.ser = None
+        self.fit_id = None
         self.setfade(fade_dur)
 
     def getcolor(self):
@@ -60,8 +61,8 @@ class FitStatUSB:
         # Could be useful if there are more than one fit devices, or to make sure
         # we don't interface with some other device that might have wound up on
         # the port we think the fit device is on.
-        fit_id = "123dummy123"
-        return(fit_id)
+        self.fit_id = "123dummy123"
+        return(self.fit_id)
 
     def setcolor(self, color: str):
         if (color == self.color):
