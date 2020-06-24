@@ -42,6 +42,7 @@ class FitStatUSB:
         self.ttyargs = ttyargs
         self.color = None
         self.colorstring = None
+        self.duration = None
         self.ser = None
 
     def getcolor(self):
@@ -76,9 +77,17 @@ class FitStatUSB:
             self.ser.close()
             return
 
+    def setfade(self, duration):
+        self.duration = 'F'+str(duration)
+        self.setcolor(self.duration)
+        print(f'setfade: {self.duration}')
+        return
+
 
 count = 0
 fit = FitStatUSB(serialargs)
+fit.setfade(1000)
+
 
 while True:
     time.sleep(pollinterval)
