@@ -40,8 +40,9 @@ sockcon = None
 class FitStatUSB:
     def __init__(self, ttyargs):
         self.ttyargs = ttyargs
+        self.cmd = None
+        self.cmdstring = None
         self.color = None
-        self.colorstring = None
         self.duration = None
         self.ser = None
 
@@ -56,30 +57,34 @@ class FitStatUSB:
 
     def setcolor(self, color):
         if (color == self.color):
-            # print("no change")
             return
         else:
             self.color = color
-            self.colorstring = self.color+'\n'
-            # Setup serial connection
-            self.ser = serial.Serial()
-            self.ser.port = self.ttyargs['port']
-            self.ser.parity = self.ttyargs['parity']
-            self.ser.baudrate = self.ttyargs['baudrate']
-            self.ser.stopbits = self.ttyargs['stopbits']
-            self.ser.timeout = self.ttyargs['timeout']
-            self.ser.open()
-            # Send binary of command string
-            self.ser.write(self.colorstring.encode())
-            print(f'Changing color to: {self.colorstring}')
-            # This seems to clear the input buffer so it doesn't freeze up
-            self.ser.read_all()
-            self.ser.close()
+            self.sendcmd(color)
             return
+
+    def sendcmd(self, cmd):
+        self.cmd = cmd
+        self.cmdstring = self.cmd+'\n'
+        # Setup serial connection
+        self.ser = serial.Serial()
+        self.ser.port = self.ttyargs['port']
+        self.ser.parity = self.ttyargs['parity']
+        self.ser.baudrate = self.ttyargs['baudrate']
+        self.ser.stopbits = self.ttyargs['stopbits']
+        self.ser.timeout = self.ttyargs['timeout']
+        self.ser.open()
+        # Send binary of command string
+        self.ser.write(self.cmdstring.encode())
+        print(f'Sending command: {self.cmdstring}')
+        # This seems to clear the input buffer so it doesn't freeze up
+        self.ser.read_all()
+        self.ser.close()
+        return
 
     def setfade(self, duration):
         self.duration = 'F'+str(duration)
-        self.setcolor(self.duration)
+        self.sendcmd(self.duration)
         print(f'setfade: {self.duration}')
         return
 
