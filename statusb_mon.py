@@ -31,6 +31,7 @@ serialargs = dict(
 sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
 pollinterval = 1
+sockcon = None
 
 
 # Forgive me. I'm learning =)
@@ -73,16 +74,16 @@ fit = FitStatUSB(serialargs)
 # TODO: handle errors without exiting
 while True:
     time.sleep(pollinterval)
-    if os.path.exists(sockpath[0]):
-        sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    else:
-        msg = f'Could not connect to {sockpath[0]}'
-        print(msg)
-        raise SystemExit(msg)
 
     # This try doesn't 'feel' right
     try:
-        sockcon.connect(sockpath[0])
+        if os.path.exists(sockpath[0]):
+            sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            sockcon.connect(sockpath[0])
+        else:
+            print(f'Could not connect to {sockpath[0]}')
+            continue
+
         while True:
             sockdata = sockcon.recv(64)
             if sockdata:
@@ -112,9 +113,14 @@ while True:
                 # No data, move along
                 break
 
-    except socket.error as msg:
-        print(f'Socket error:\n\tcnt={count}\n\tmsg={msg}\n\tSockpath={sockpath[0]}')
-        raise SystemExit(1)
-
+    # Just catch it all for now.
+    except Exception as msg:
+        if hasattr(msg, 'message'):
+            print(msg.message)
+            continue
+        else:
+            print(msg)
+            continue
     finally:
-        sockcon.close()
+        if(sockcon):
+            sockcon.close()
