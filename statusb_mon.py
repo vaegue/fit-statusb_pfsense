@@ -96,6 +96,7 @@ while True:
                 if(dping_loss > 0):
                     print(f"loss: {dping_res['loss']}")
 
+                # TODO: check trend and react accordingly
                 if (dping_loss == 0):
                     fit.setcolor('#00ff00')
                 elif(1 < dping_loss <= 10):
