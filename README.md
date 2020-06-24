@@ -3,6 +3,7 @@ Dirty hack. Work in progress.
 Hopefully the start of a working [fit-statusb](https://fit-iot.com/web/product/fit-statusb/) plugin(ish) for pfSense.
 
 This currently functions (pfSense 2.4.5), but it is ugly.
-- no graceful start
+- up to user how to start it for now (still under development)
+- no install instructions. not sure best way to start service in pfSense
 - no graceful error handling (good LUCK!)
 - requires `pkg install py37-serial` (pfsense)
