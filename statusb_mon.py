@@ -45,7 +45,7 @@ class FitStatUSB:
 
     def setcolor(self, color):
         if (color == self.color):
-            print("no change")
+            # print("no change")
             return
         else:
             self.color = color
@@ -69,7 +69,7 @@ class FitStatUSB:
 count = 0
 fit = FitStatUSB(serialargs)
 
-
+# TODO: handle errors without exiting
 while True:
     time.sleep(pollinterval)
     if os.path.exists(sockpath[0]):
@@ -88,14 +88,16 @@ while True:
                 # WAN_DHCP 1168 613 0
                 # b'WAN_DHCP 1168 613 0\n'
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
-                print(f"loss: {dping_res['loss']}")
                 # We only really care about loss for now
                 dping_loss = int(dping_res['loss'])
+                if(dping_loss > 0):
+                    print(f"loss: {dping_res['loss']}")
+
                 if (dping_loss == 0):
                     fit.setcolor('#00ff00')
-                elif(1 < dping_loss < 10):
+                elif(1 < dping_loss <= 10):
                     fit.setcolor('#da1600')
-                elif(10 < dping_loss < 30):
+                elif(10 < dping_loss <= 30):
                     fit.setcolor('#da0800')
                 elif(dping_loss > 30):
                     fit.setcolor('#ff0000')
