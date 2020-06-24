@@ -18,6 +18,7 @@ import serial
 # define serial device.
 # TODO: find out what pfsense does if serial console is enabled
 # TODO: make configurable?
+# TODO: handle more than one fit device (need to buy another one)
 serialdev = '/dev/cuaU0'
 serialargs = dict(
     port=serialdev,
@@ -71,7 +72,6 @@ class FitStatUSB:
 count = 0
 fit = FitStatUSB(serialargs)
 
-# TODO: handle errors without exiting
 while True:
     time.sleep(pollinterval)
 
