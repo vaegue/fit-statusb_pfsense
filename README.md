@@ -1,5 +1,4 @@
-Dirty hack. Work in progress.
-(don't hurt me, I'm learning)
+Dirty hack. Work in progress. _don't hurt me, I'm learning._<br>
 Hopefully the start of a working [fit-statusb](https://fit-iot.com/web/product/fit-statusb/) plugin(ish) for pfSense.
 
 This currently functions (pfSense 2.4.5), but it is ugly.
