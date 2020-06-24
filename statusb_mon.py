@@ -28,23 +28,26 @@ serialargs = dict(
     stopbits=serial.STOPBITS_ONE,
     timeout=1
 )
+# Some defaults
+pollinterval = 1
+duration = 1000
+sockcon = None
+
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
 sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
-pollinterval = 1
-sockcon = None
-
 
 # Forgive me. I'm learning =)
 class FitStatUSB:
-    def __init__(self, ttyargs):
+    def __init__(self, ttyargs: dict, fade_dur: int = 1000):
         self.ttyargs = ttyargs
         self.cmd = None
         self.cmdstring = None
         self.color = None
-        self.duration = None
+        self.dur = None
         self.ser = None
+        self.setfade(fade_dur)
 
     def getcolor(self):
         # TODO: get color from device 'G' command
@@ -55,7 +58,7 @@ class FitStatUSB:
         fit_id = "123dummy123"
         return(fit_id)
 
-    def setcolor(self, color):
+    def setcolor(self, color: str):
         if (color == self.color):
             return
         else:
@@ -63,7 +66,7 @@ class FitStatUSB:
             self.sendcmd(color)
             return
 
-    def sendcmd(self, cmd):
+    def sendcmd(self, cmd: str):
         self.cmd = cmd
         self.cmdstring = self.cmd+'\n'
         # Setup serial connection
@@ -82,16 +85,15 @@ class FitStatUSB:
         self.ser.close()
         return
 
-    def setfade(self, duration):
-        self.duration = 'F'+str(duration)
-        self.sendcmd(self.duration)
-        print(f'setfade: {self.duration}')
+    def setfade(self, dur: int):
+        self.dur = 'F'+str(dur)
+        self.sendcmd(self.dur)
+        print(f'setfade: {self.dur}')
         return
 
 
 count = 0
-fit = FitStatUSB(serialargs)
-fit.setfade(1000)
+fit = FitStatUSB(serialargs, duration)
 
 
 while True:
