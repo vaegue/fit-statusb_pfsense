@@ -51,10 +51,15 @@ class FitStatUSB:
 
     def getcolor(self):
         # TODO: get color from device 'G' command
+        # This returns the last color that was SENT to the device.
+        # This has no clue what the device is actually set to.
         return(self.color)
 
     def getid(self):
         # TODO: get ID from device '?' command
+        # Could be useful if there are more than one fit devices, or to make sure
+        # we don't interface with some other device that might have wound up on
+        # the port we think the fit device is on.
         fit_id = "123dummy123"
         return(fit_id)
 
