@@ -108,15 +108,15 @@ while True:
 
                 # TODO: check trend and react accordingly
                 if (dping_loss == 0):
-                    fit.setcolor('#00ff00')
+                    fit.setcolor('#00FF00')
                 elif(1 < dping_loss <= 10):
-                    fit.setcolor('#da1600')
+                    fit.setcolor('#DA1600')
                 elif(10 < dping_loss <= 30):
-                    fit.setcolor('#da0800')
+                    fit.setcolor('#DA0800')
                 elif(dping_loss > 30):
-                    fit.setcolor('#ff0000')
+                    fit.setcolor('#FF0000')
                 else:
-                    fit.setcolor('#0000ff')
+                    fit.setcolor('#0000FF')
                 # print(f'Color: {fit.getcolor()}')
                 # print(f'Count: {count}')
             else:
