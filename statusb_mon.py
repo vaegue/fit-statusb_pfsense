@@ -19,28 +19,58 @@ import serial
 # TODO: find out what pfsense does if serial console is enabled
 # TODO: make configurable?
 serialdev = '/dev/cuaU0'
-
+serialargs = dict(
+    port=serialdev,
+    baudrate=9600,
+    parity=serial.PARITY_EVEN,
+    timeout=1
+)
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
+# TODO: What to do if nothing found?
 sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
-pollinterval = .5
+pollinterval = 1
 
 
-def setcolor(incolor, device):
-    # TODO: do something smart so the color only gets sent when it needs to change
-    # maybe this should be a class?
-    print(f'Color: {incolor}')
-    # print(f'Dev: {device}')
-    colorstring = incolor+'\n'
-    ser = serial.Serial(device, 9600, parity=serial.PARITY_EVEN, timeout=1)
-    ser.write(colorstring.encode())
-    ser.read_all()
-    ser.close()
+# Forgive me. I'm learning =)
+class FitStatUSB:
+    def __init__(self, ttyargs):
+        self.ttyargs = ttyargs
+        self.color = None
+        self.colorstring = None
+        self.ser = None
+
+    def getcolor(self):
+        return self.color
+
+    def setcolor(self, color):
+        if (color == self.color):
+            # print("no change")
+            return
+        else:
+            self.color = color
+            self.colorstring = self.color+'\n'
+            # Setup serial connection
+            self.ser = serial.Serial()
+            self.ser.port = self.ttyargs['port']
+            self.ser.parity = self.ttyargs['parity']
+            self.ser.baudrate = self.ttyargs['baudrate']
+            self.ser.timeout = self.ttyargs['timeout']
+            self.ser.open()
+            # Send binary of command string
+            self.ser.write(self.colorstring.encode())
+            print(f'Changing color to: {self.colorstring}')
+            # This seems to clear the input buffer so it doesn't freeze up
+            self.ser.read_all()
+            self.ser.close()
+            return
 
 
 count = 0
+fit = FitStatUSB(serialargs)
 
+# TODO: handle errors without exiting
 while True:
     time.sleep(pollinterval)
     if os.path.exists(sockpath[0]):
@@ -50,6 +80,7 @@ while True:
         print(msg)
         raise SystemExit(msg)
 
+    # This try doesn't 'feel' right
     try:
         sockcon.connect(sockpath[0])
         while True:
@@ -59,27 +90,30 @@ while True:
                 # WAN_DHCP 1168 613 0
                 # b'WAN_DHCP 1168 613 0\n'
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
-                print(f"loss: {dping_res['loss']}")
                 # We only really care about loss for now
                 dping_loss = int(dping_res['loss'])
+                if(dping_loss > 0):
+                    print(f"loss: {dping_res['loss']}")
+
                 if (dping_loss == 0):
-                    setcolor('#00ff00', serialdev)
-                elif(1 < dping_loss < 10):
-                    setcolor('#da1600', serialdev)
-                elif(10 < dping_loss < 30):
-                    setcolor('#da0800', serialdev)
+                    fit.setcolor('#00ff00')
+                elif(1 < dping_loss <= 10):
+                    fit.setcolor('#da1600')
+                elif(10 < dping_loss <= 30):
+                    fit.setcolor('#da0800')
                 elif(dping_loss > 30):
-                    setcolor('#ff0000', serialdev)
+                    fit.setcolor('#ff0000')
                 else:
-                    setcolor('should not happen', serialdev)
+                    fit.setcolor('#0000ff')
                 count = count + 1
-                print(f'Count: {count}')
+                # print(f'Color: {fit.getcolor()}')
+                # print(f'Count: {count}')
             else:
                 # No data, move along
                 break
 
     except socket.error as msg:
-        print(f'Socket error ({count}):\n\t{msg}')
+        print(f'Socket error:\n\tcnt={count}\n\tmsg={msg}\n\tSockpath={sockpath[0]}')
         raise SystemExit(1)
 
     finally:
