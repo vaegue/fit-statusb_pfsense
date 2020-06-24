@@ -35,6 +35,7 @@ sockcon = None
 
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
+# TODO: What if gateway changes?
 sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
 
