@@ -16,6 +16,7 @@ import glob
 import serial
 
 # define serial device.
+# TODO: logging?
 # TODO: find out what pfsense does if serial console is enabled
 # TODO: make configurable?
 # TODO: handle more than one fit device (need to buy another one)
