@@ -80,6 +80,7 @@ while True:
         print(msg)
         raise SystemExit(msg)
 
+    # This try doesn't 'feel' right
     try:
         sockcon.connect(sockpath[0])
         while True:
