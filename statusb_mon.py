@@ -44,7 +44,13 @@ class FitStatUSB:
         self.ser = None
 
     def getcolor(self):
-        return self.color
+        # TODO: get color from device 'G' command
+        return(self.color)
+
+    def getid(self):
+        # TODO: get ID from device '?' command
+        fit_id = "123dummy123"
+        return(fit_id)
 
     def setcolor(self, color):
         if (color == self.color):
