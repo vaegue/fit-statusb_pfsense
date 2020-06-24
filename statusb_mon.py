@@ -92,8 +92,10 @@ while True:
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
                 # We only really care about loss for now
                 dping_loss = int(dping_res['loss'])
+                count = count + 1
+
                 if(dping_loss > 0):
-                    print(f"loss: {dping_res['loss']}")
+                    print(f"loss: {dping_res['loss']}, count: {count}")
 
                 # TODO: check trend and react accordingly
                 if (dping_loss == 0):
@@ -106,7 +108,6 @@ while True:
                     fit.setcolor('#ff0000')
                 else:
                     fit.setcolor('#0000ff')
-                count = count + 1
                 # print(f'Color: {fit.getcolor()}')
                 # print(f'Count: {count}')
             else:
