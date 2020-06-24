@@ -27,6 +27,7 @@ serialargs = dict(
 )
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
+# TODO: What to do if nothing found?
 sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
 pollinterval = 1
