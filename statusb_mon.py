@@ -23,8 +23,9 @@ import serial
 serialdev = '/dev/cuaU0'
 serialargs = dict(
     port=serialdev,
-    baudrate=9600,
-    parity=serial.PARITY_EVEN,
+    baudrate=115200,
+    parity=serial.PARITY_NONE,
+    stopbits=serial.STOPBITS_ONE,
     timeout=1
 )
 # Path to dpinger socket file
@@ -64,6 +65,7 @@ class FitStatUSB:
             self.ser.port = self.ttyargs['port']
             self.ser.parity = self.ttyargs['parity']
             self.ser.baudrate = self.ttyargs['baudrate']
+            self.ser.stopbits = self.ttyargs['stopbits']
             self.ser.timeout = self.ttyargs['timeout']
             self.ser.open()
             # Send binary of command string
