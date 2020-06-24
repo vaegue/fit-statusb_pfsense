@@ -111,7 +111,7 @@ while True:
                 break
 
     except socket.error as msg:
-        print(f'Socket error (cnt={count}):\n\tmsg={msg}\n\tSockpath={sockpath[0]}')
+        print(f'Socket error:\n\tcnt={count}\n\tmsg={msg}\n\tSockpath={sockpath[0]}')
         raise SystemExit(1)
 
     finally:
