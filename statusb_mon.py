@@ -28,10 +28,22 @@ serialargs = dict(
     stopbits=serial.STOPBITS_ONE,
     timeout=1
 )
+
+colorcodes = dict(
+    red='FF0000',
+    green='00FF00',
+    blue='0000FF',
+    down='B#FFA500-1000#FF0000',
+    up='B#FFA500-1000#00FF00',
+    steady='B#FFA500-1000#000000'
+)
+
 # Some defaults
 pollinterval = 1
 duration = 1000
 sockcon = None
+loss_log = []
+diff_log = []
 
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
@@ -126,19 +138,31 @@ while True:
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
                 # We only really care about loss for now
                 dping_loss = int(dping_res['loss'])
+                cur_diff = []
                 count = count + 1
 
-                if(dping_loss > 0):
+                if (dping_loss > 0):
                     print(f"loss: {dping_res['loss']}, count: {count}")
 
                 # TODO: check trend and react accordingly
+                # This is a mess and I need sleep
+                if (len(loss_log) > 0):
+                    cur_diff = loss_log[len(loss_log) - 1] - dping_loss
+                    loss_log.append(dping_loss)
+                    diff_log.append(cur_diff)
+                else:
+                    loss_log.append(dping_loss)
+                    diff_log.append(100-dping_loss)
+
+                print(cur_diff)
+
                 if (dping_loss == 0):
                     fit.setcolor('#00FF00')
-                elif(0 < dping_loss < 11):
+                elif (0 < dping_loss < 11):
                     fit.setcolor('#DA1600')
-                elif(10 < dping_loss < 31):
+                elif (10 < dping_loss < 31):
                     fit.setcolor('#DA0800')
-                elif(dping_loss > 30):
+                elif (dping_loss > 30):
                     fit.setcolor('#FF0000')
                 else:
                     fit.setcolor('#0000FF')
