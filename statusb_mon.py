@@ -86,6 +86,8 @@ class FitStatUSB:
         self.ser.open()
         # Send binary of command string
         self.ser.write(self.cmdstring.encode())
+        # flush for stability
+        self.ser.flush()
         print(f'Sending command: {self.cmdstring}')
         # This seems to clear the input buffer so it doesn't freeze up
         self.ser.read_all()
