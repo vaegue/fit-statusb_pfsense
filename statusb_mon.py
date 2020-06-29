@@ -29,20 +29,31 @@ serialargs = dict(
     timeout=1
 )
 
-colorcodes = dict(
-    red='FF0000',
-    green='00FF00',
-    blue='0000FF',
-    down='B#FFA500-1000#FF0000',
-    up='B#FFA500-1000#00FF00',
-    steady='B#FFA500-1000#000000'
+pulse = str('100')
+# Purely for ease of typing
+red = '#FF0000'
+green = '#00FF00'
+blue = '#0000FF'
+yellow = '#FF4100'
+orange = '#E00A00'
+black = '#000000'
+white = '#FFFFFF'
+teal = '#00903F'
+fuscia = '#FF0044'
+purple = '#700070'
+
+colorcode = dict(
+    down=f'B{orange}-{pulse}{red}',
+    up=f'B{orange}-{pulse}{green}',
+    steady=f'B{orange}-{pulse}{yellow}'
 )
 
 # Some defaults
 pollinterval = 1
 duration = 1000
 sockcon = None
-loss_log = []
+# Startup assuming 100 percent loss
+prev_loss = 100
 diff_log = []
 
 # Path to dpinger socket file
@@ -124,6 +135,7 @@ while True:
     try:
         if os.path.exists(sockpath[0]):
             sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            # print(f'connecting to: {sockpath[0]}')
             sockcon.connect(sockpath[0])
         else:
             print(f'Could not connect to {sockpath[0]}')
@@ -144,30 +156,26 @@ while True:
                 if (dping_loss > 0):
                     print(f"loss: {dping_res['loss']}, count: {count}")
 
-                # TODO: check trend and react accordingly
-                # This is a mess and I need sleep
-                if (len(loss_log) > 0):
-                    cur_diff = loss_log[len(loss_log) - 1] - dping_loss
-                    loss_log.append(dping_loss)
-                    diff_log.append(cur_diff)
-                else:
-                    loss_log.append(dping_loss)
-                    diff_log.append(100-dping_loss)
+                # fixme: smooth this out using cur_diff, diff_log
+                cur_diff = prev_loss - dping_loss
 
-                print(cur_diff)
-
-                if (dping_loss == 0):
-                    fit.setcolor('#00FF00')
-                elif (0 < dping_loss < 11):
-                    fit.setcolor('#DA1600')
-                elif (10 < dping_loss < 31):
-                    fit.setcolor('#DA0800')
-                elif (dping_loss > 30):
-                    fit.setcolor('#FF0000')
-                else:
-                    fit.setcolor('#0000FF')
+                if (cur_diff > 0):
+                    fit.setcolor(colorcode['up'])
+                elif (cur_diff < 0):
+                    fit.setcolor(colorcode['down'])
+                elif (cur_diff == 0 and dping_loss == 0):
+                    fit.setcolor(green)
+                elif (cur_diff == 0 and dping_loss == 100):
+                    fit.setcolor(red)
+                elif (cur_diff == 0 and dping_loss != (0 or 100)):
+                    fit.setcolor(colorcode['steady'])
                 # print(f'Color: {fit.getcolor()}')
                 # print(f'Count: {count}')
+                prev_loss = dping_loss
+                diff_log.append(cur_diff)
+                if (len(diff_log) > 5):
+                    diff_log.pop(0)
+
             else:
                 # No data, move along
                 break
