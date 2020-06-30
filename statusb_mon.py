@@ -112,7 +112,7 @@ class FitStatUSB:
         self.ser.write(self.cmdstring.encode())
         # flush for stability
         self.ser.flush()
-        print(f'Sending command: {self.cmdstring}')
+        print(f'Sending command: {self.cmdstring.strip()}')
         # This seems to clear the input buffer so it doesn't freeze up
         self.ser.read_all()
         self.ser.close()
@@ -136,31 +136,34 @@ while True:
     try:
         if os.path.exists(sockpath[0]):
             sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            print(f'connecting to: {sockpath[0]}')
+            # print(f'connecting to: {sockpath[0]}')
             sockcon.connect(sockpath[0])
         else:
             print(f'Could not connect to {sockpath[0]}')
             continue
 
         while True:
-            print(f'receving data from: {sockpath[0]}')
+            # print(f'receving data from: {sockpath[0]}')
             sockdata = sockcon.recv(64)
             if sockdata:
-                print(f'sockdata: {sockdata.decode()}')
+                # print(f'sockdata: {sockdata.decode()}')
                 # {gw_name} {lat_ave} {lat_std_dev} {loss}
                 # WAN_DHCP 1168 613 0
                 # b'WAN_DHCP 1168 613 0\n'
                 dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
                 # We only really care about loss for now
                 dping_loss = int(dping_res['loss'])
-                cur_diff = []
                 count = count + 1
+                cur_diff = prev_loss - dping_loss
 
                 if (dping_loss > 0):
-                    print(f"loss: {dping_res['loss']}, count: {count}")
+                    if (cur_diff < 0):
+                        msg = f"loss: {dping_res['loss']}\tcur_diff:{cur_diff} ({count})"
+                    else:
+                        msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff} ({count})"
+                    print(msg)
 
                 # fixme: smooth this out using cur_diff, diff_log
-                cur_diff = prev_loss - dping_loss
 
                 if (cur_diff > 0):
                     fit.setcolor(colorcode['up'])
@@ -172,7 +175,7 @@ while True:
                     fit.setcolor(red)
                 elif (cur_diff == 0 and dping_loss != (0 or 100)):
                     fit.setcolor(colorcode['steady'])
-                print(f'Color: {fit.getcolor()}')
+                # print(f'Color: {fit.getcolor()}')
                 # print(f'Count: {count}')
                 prev_loss = dping_loss
                 diff_log.append(cur_diff)
