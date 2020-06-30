@@ -5,7 +5,12 @@ import sys
 import os
 import random
 
-arg = sys.argv[1]
+if (len(sys.argv) == 2):
+    arg = sys.argv[1]
+elif (len(sys.argv) < 2):
+    raise SystemExit(f'No arguments.\n Valid options [ up, down, updown, steady, off, on, 50 ]')
+else:
+    raise SystemExit(f'Invalid number of args ({len(sys.argv)-1}).\n Valid options [ up, down, updown, steady, off, on, 50 ]')
 
 host = './sock_test.sock'
 
@@ -103,7 +108,7 @@ def downgen(direction: str = '50'):
         while True:
             yield(50)
     else:
-        raise SystemExit(f'Invalid argument ({direction}).\n Valid options [ up, down, updown, steady, off, on]')
+        raise SystemExit(f'Invalid argument ({direction}).\n Valid options [ up, down, updown, steady, off, on, 50 ]')
 
 
 while True:
