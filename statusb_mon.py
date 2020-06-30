@@ -44,7 +44,7 @@ purple = '#700070'
 
 colorcode = dict(
     down=f'B{orange}-{pulse}{red}',
-    up=f'B{orange}-{pulse}{green}',
+    up=f'B{yellow}-{pulse}{green}',
     steady=f'B{orange}-{pulse}{yellow}'
 )
 
@@ -61,8 +61,8 @@ ave_diff = 0
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
 # TODO: What if gateway changes?
-# sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
-sockpath = ['./sock_test.sock']
+sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
+# sockpath = ['./sock_test.sock']
 
 
 # Forgive me. I'm learning =)
@@ -176,7 +176,7 @@ while True:
                     fit.setcolor(green)
                 elif (ave_diff == 0 and dping_loss == 100):
                     fit.setcolor(red)
-                elif ((sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):
+                elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):
                     fit.setcolor(colorcode['steady'])
 
                 # Should probably trash this
