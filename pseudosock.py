@@ -31,6 +31,35 @@ count = 0
 
 # Generator for testing against loss trends
 def downgen(direction: str = '50'):
+    print(f'----------------\n{direction}\n----------------')
+    # I know. I also don't care.
+    if (direction == 'updown'):
+        # UP
+        print('----------------\nTREND UP\n----------------')
+        stp = 100
+        stpm = stp - 5
+        retvar = 100
+        while (retvar > 0):
+            retvar = stp = random.randint(stpm, stp)
+            stpm = stp - 5
+            if (retvar < 0):
+                yield (0)
+            else:
+                yield (retvar)
+
+        # DOWN
+        print('----------------\nTREND DN\n----------------')
+        stp = 0
+        stpm = stp + 5
+        retvar = 0
+        while (retvar < 100):
+            retvar = stp = random.randint(stp, stpm)
+            stpm = stp + 5
+            if (retvar > 100):
+                yield (100)
+            else:
+                yield (retvar)
+
     if (direction == 'down'):
         stp = 0
         stpm = stp+5
@@ -73,6 +102,8 @@ def downgen(direction: str = '50'):
     elif (direction == '50'):
         while True:
             yield(50)
+    else:
+        raise SystemExit(f'Invalid argument ({direction}).\n Valid options [ up, down, updown, steady, off, on]')
 
 
 while True:
