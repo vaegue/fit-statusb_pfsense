@@ -57,6 +57,7 @@ sockcon = None
 prev_loss = 100
 diff_log = []
 ave_diff = 0
+# Loss threshholds for full-up/down
 up_thresh = 0
 down_thresh = 100
 
