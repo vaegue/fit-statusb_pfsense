@@ -57,6 +57,8 @@ sockcon = None
 prev_loss = 100
 diff_log = []
 ave_diff = 0
+up_thresh = 0
+down_thresh = 100
 
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
@@ -172,9 +174,9 @@ while True:
                     fit.setcolor(colorcode['up'])
                 elif (ave_diff < -sensitivity):
                     fit.setcolor(colorcode['down'])
-                elif (ave_diff == 0 and dping_loss == 0):
+                elif (ave_diff == 0 and dping_loss == up_thresh):
                     fit.setcolor(green)
-                elif (ave_diff == 0 and dping_loss == 100):
+                elif (ave_diff == 0 and dping_loss == down_thresh):
                     fit.setcolor(red)
                 elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):
                     fit.setcolor(colorcode['steady'])
