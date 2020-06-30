@@ -43,9 +43,9 @@ fuscia = '#FF0044'
 purple = '#700070'
 
 colorcode = dict(
-    down=f'B{orange}-{pulse}{red}',
+    down=f'B{yellow}-{pulse}{red}',
     up=f'B{yellow}-{pulse}{green}',
-    steady=f'B{orange}-{pulse}{yellow}'
+    steady=f'B{teal}-{pulse}{yellow}'
 )
 
 # Some defaults
@@ -94,12 +94,13 @@ class FitStatUSB:
         return(self.fit_id)
 
     def setcolor(self, color: str):
-        if (color == self.color):
-            return
-        else:
-            self.color = color
-            self.sendcmd(color)
-            return
+        # Moved tihs check outside of class
+        # if (color == self.color):
+        #     return
+        # else:
+        self.color = color
+        self.sendcmd(color)
+        return
 
     def sendcmd(self, cmd: str):
         self.cmd = cmd
@@ -161,7 +162,7 @@ while True:
                 cur_diff = prev_loss - dping_loss
                 prev_loss = dping_loss
                 diff_log.append(cur_diff)
-                if (len(diff_log) > 5):
+                if (len(diff_log) > 6):
                     diff_log.pop(0)
 
                 ave_diff = sum(diff_log)/len(diff_log)
@@ -169,18 +170,20 @@ while True:
                     msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
                     print(msg)
 
-                # fixme: smooth this out using cur_diff, diff_log
+                setcolor = None
                 if (ave_diff > sensitivity):
-                    fit.setcolor(colorcode['up'])
+                    setcolor = colorcode['up']
                 elif (ave_diff < -sensitivity):
-                    fit.setcolor(colorcode['down'])
+                    setcolor = colorcode['down']
                 elif (ave_diff == 0 and dping_loss == up_thresh):
-                    fit.setcolor(green)
+                    setcolor = green
                 elif (ave_diff == 0 and dping_loss == down_thresh):
-                    fit.setcolor(red)
+                    setcolor = red
                 elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):
-                    fit.setcolor(colorcode['steady'])
+                    setcolor = colorcode['steady']
 
+                if (setcolor != fit.getcolor()):
+                    fit.setcolor(setcolor)
                 # Should probably trash this
                 # if (cur_diff > 0):
                 #     fit.setcolor(colorcode['up'])
