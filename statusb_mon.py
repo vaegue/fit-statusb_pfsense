@@ -51,10 +51,12 @@ colorcode = dict(
 # Some defaults
 pollinterval = 1
 duration = 1000
+sensitivity = .5
 sockcon = None
 # Startup assuming 100 percent loss
 prev_loss = 100
 diff_log = []
+ave_diff = 0
 
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
@@ -155,32 +157,41 @@ while True:
                 dping_loss = int(dping_res['loss'])
                 count = count + 1
                 cur_diff = prev_loss - dping_loss
-
-                if (dping_loss > 0):
-                    if (cur_diff < 0):
-                        msg = f"loss: {dping_res['loss']}\tcur_diff:{cur_diff} ({count})"
-                    else:
-                        msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff} ({count})"
-                    print(msg)
-
-                # fixme: smooth this out using cur_diff, diff_log
-
-                if (cur_diff > 0):
-                    fit.setcolor(colorcode['up'])
-                elif (cur_diff < 0):
-                    fit.setcolor(colorcode['down'])
-                elif (cur_diff == 0 and dping_loss == 0):
-                    fit.setcolor(green)
-                elif (cur_diff == 0 and dping_loss == 100):
-                    fit.setcolor(red)
-                elif (cur_diff == 0 and dping_loss != (0 or 100)):
-                    fit.setcolor(colorcode['steady'])
-                # print(f'Color: {fit.getcolor()}')
-                # print(f'Count: {count}')
                 prev_loss = dping_loss
                 diff_log.append(cur_diff)
                 if (len(diff_log) > 5):
                     diff_log.pop(0)
+
+                ave_diff = sum(diff_log)/len(diff_log)
+                if (dping_loss > 0):
+                    msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
+                    print(msg)
+
+                # fixme: smooth this out using cur_diff, diff_log
+                if (ave_diff > sensitivity):
+                    fit.setcolor(colorcode['up'])
+                elif (ave_diff < -sensitivity):
+                    fit.setcolor(colorcode['down'])
+                elif (ave_diff == 0 and dping_loss == 0):
+                    fit.setcolor(green)
+                elif (ave_diff == 0 and dping_loss == 100):
+                    fit.setcolor(red)
+                elif ((sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):
+                    fit.setcolor(colorcode['steady'])
+
+                # Should probably trash this
+                # if (cur_diff > 0):
+                #     fit.setcolor(colorcode['up'])
+                # elif (cur_diff < 0):
+                #     fit.setcolor(colorcode['down'])
+                # elif (cur_diff == 0 and dping_loss == 0):
+                #     fit.setcolor(green)
+                # elif (cur_diff == 0 and dping_loss == 100):
+                #     fit.setcolor(red)
+                # elif (cur_diff == 0 and dping_loss != (0 or 100)):
+                #     fit.setcolor(colorcode['steady'])
+                # print(f'Color: {fit.getcolor()}')
+                # print(f'Count: {count}')
 
             else:
                 # No data, move along
