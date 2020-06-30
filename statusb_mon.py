@@ -175,11 +175,11 @@ while True:
                     setcolor = colorcode['up']
                 elif (ave_diff < -sensitivity):
                     setcolor = colorcode['down']
-                elif (ave_diff == 0 and dping_loss == up_thresh):
+                elif (ave_diff == 0 and dping_loss >= up_thresh):
                     setcolor = green
-                elif (ave_diff == 0 and dping_loss == down_thresh):
+                elif (ave_diff == 0 and dping_loss <= down_thresh):
                     setcolor = red
-                elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):
+                elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):  # fixme: lt or eq to thresh
                     setcolor = colorcode['steady']
 
                 if (setcolor != fit.getcolor()):
