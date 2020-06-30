@@ -59,7 +59,8 @@ diff_log = []
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
 # TODO: What if gateway changes?
-sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
+# sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
+sockpath = ['./sock_test.sock']
 
 
 # Forgive me. I'm learning =)
@@ -135,15 +136,17 @@ while True:
     try:
         if os.path.exists(sockpath[0]):
             sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            # print(f'connecting to: {sockpath[0]}')
+            print(f'connecting to: {sockpath[0]}')
             sockcon.connect(sockpath[0])
         else:
             print(f'Could not connect to {sockpath[0]}')
             continue
 
         while True:
+            print(f'receving data from: {sockpath[0]}')
             sockdata = sockcon.recv(64)
             if sockdata:
+                print(f'sockdata: {sockdata.decode()}')
                 # {gw_name} {lat_ave} {lat_std_dev} {loss}
                 # WAN_DHCP 1168 613 0
                 # b'WAN_DHCP 1168 613 0\n'
@@ -169,7 +172,7 @@ while True:
                     fit.setcolor(red)
                 elif (cur_diff == 0 and dping_loss != (0 or 100)):
                     fit.setcolor(colorcode['steady'])
-                # print(f'Color: {fit.getcolor()}')
+                print(f'Color: {fit.getcolor()}')
                 # print(f'Count: {count}')
                 prev_loss = dping_loss
                 diff_log.append(cur_diff)
