@@ -3,6 +3,9 @@
 import socket
 import sys
 import os
+import random
+
+arg = sys.argv[1]
 
 host = './sock_test.sock'
 
@@ -25,15 +28,65 @@ sock.bind(host)
 sock.listen(1)
 count = 0
 
+
+# Generator for testing against loss trends
+def downgen(direction: str = '50'):
+    if (direction == 'down'):
+        stp = 0
+        stpm = stp+5
+        retvar = 0
+        while (retvar < 100):
+            retvar = stp = random.randint(stp, stpm)
+            stpm = stp+5
+            if (retvar > 100):
+                yield(100)
+            else:
+                yield(retvar)
+    elif (direction == 'up'):
+        stp = 100
+        stpm = stp - 5
+        retvar = 100
+        while (retvar > 0):
+            retvar = stp = random.randint(stpm, stp)
+            stpm = stp - 5
+            if (retvar < 0):
+                yield(0)
+            else:
+                yield(retvar)
+    elif (direction == 'steady'):
+        stp = 50
+        while True:
+            choice = random.choice([1, -1, 0, 0])
+            retvar = stp + choice
+            if (retvar > 0 or retvar < 100):
+                yield(retvar)
+            elif (retvar > 100):
+                yield(100)
+            elif (retvar < 0):
+                yield(0)
+    elif (direction == 'off'):
+        while True:
+            yield(100)
+    elif (direction == 'on'):
+        while True:
+            yield(0)
+    elif (direction == '50'):
+        while True:
+            yield(50)
+
+
 while True:
     eprint('Waiting for connection')
     while True:
-        count = count + 1
-        connection, client = sock.accept()
-        eprint(f'connection from {client}')
-        # WAN_DHCP 1168 613 0
-        message = b'WAN_DHCP 1234 567 90'
-        eprint(f'sending {message.decode()}')
-        connection.sendall(message)
-        connection.close()
-        eprint(f'cnt: {count}')
+
+        for loss in downgen(arg):
+            count = count + 1
+
+            connection, client = sock.accept()
+            # eprint(f'connection from {client}')
+            # WAN_DHCP 1168 613 0
+            message = f'WAN_DHCP 1234 567 {loss}'
+            # eprint(f'sending {message}')
+            eprint(f'loss: {loss} ({count})')
+            connection.sendall(message.encode())
+            connection.close()
