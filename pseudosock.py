@@ -38,6 +38,8 @@ count = 0
 def downgen(direction: str = '50'):
     print(f'----------------\n{direction}\n----------------')
     # I know. I also don't care.
+    # fixme: after this cycles, it exits on 'else'
+    # OUTPUT: Invalid argument (updown).
     if (direction == 'updown'):
         # UP
         print('----------------\nTREND UP\n----------------')
