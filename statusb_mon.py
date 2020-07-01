@@ -29,6 +29,7 @@ serialargs = dict(
     timeout=1
 )
 
+# fixme: organize these
 pulse = str('100')
 # Purely for ease of typing
 red = '#FF0000'
