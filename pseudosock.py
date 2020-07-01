@@ -18,11 +18,10 @@ if (len(sys.argv) >= 2):
         sarg = 50
         if (len(sys.argv) == 3):
             sarg = int(sys.argv[2])
-
 else:
     raise SystemExit('Invalid arguments.\n Valid options [ up, down, updown, steady {percent}, flat {percent}, off, on, 50 ]')
 
-host = './sock_test.sock'
+sockfile = './sock_test.sock'
 
 
 def eprint(*args, **kwargs):
@@ -30,16 +29,16 @@ def eprint(*args, **kwargs):
 
 
 try:
-    os.unlink(host)
+    os.unlink(sockfile)
 except OSError:
-    if os.path.exists(host):
+    if os.path.exists(sockfile):
         raise
 
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-eprint(f'starting up on {host}')
+eprint(f'starting up on {sockfile}')
 
-sock.bind(host)
+sock.bind(sockfile)
 sock.listen(1)
 count = 0
 
@@ -131,17 +130,21 @@ def downgen(pattern: str = '50', perc: int = 50):
         yield (100)
 
 
-while True:
-    eprint('Waiting for connection')
+try:
     while True:
-        for loss in downgen(arg, sarg):
-            count = count + 1
+        eprint('Waiting for connection')
+        while True:
+            for loss in downgen(arg, sarg):
+                count = count + 1
 
-            connection, client = sock.accept()
-            # eprint(f'connection from {client}')
-            # WAN_DHCP 1168 613 0
-            message = f'WAN_DHCP 1234 567 {loss}'
-            # eprint(f'sending {message}')
-            eprint(f'loss: {loss} ({count})')
-            connection.sendall(message.encode())
-            connection.close()
+                connection, client = sock.accept()
+                # eprint(f'connection from {client}')
+                # WAN_DHCP 1168 613 0
+                message = f'WAN_DHCP 1234 567 {loss}'
+                # eprint(f'sending {message}')
+                eprint(f'loss: {loss} ({count})')
+                connection.sendall(message.encode())
+                connection.close()
+finally:
+    os.unlink(sockfile)
+    print(f'cleaning up {sockfile}')
