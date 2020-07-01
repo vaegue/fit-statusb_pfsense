@@ -42,7 +42,7 @@ teal = '#00903F'
 fuscia = '#FF0044'
 purple = '#700070'
 
-colorcode = dict(
+colorseq = dict(
     down=f'B{yellow}-{pulse}{red}',
     up=f'B{yellow}-{pulse}{green}',
     steady=f'B{teal}-{pulse}{yellow}'
@@ -173,15 +173,15 @@ while True:
 
                 setcolor = None
                 if (ave_diff > sensitivity):
-                    setcolor = colorcode['up']
+                    setcolor = colorseq['up']
                 elif (ave_diff < -sensitivity):
-                    setcolor = colorcode['down']
+                    setcolor = colorseq['down']
                 elif (ave_diff == 0 and dping_loss >= up_thresh):
                     setcolor = green
                 elif (ave_diff == 0 and dping_loss <= down_thresh):
                     setcolor = red
                 elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):  # fixme: lt or eq to thresh
-                    setcolor = colorcode['steady']
+                    setcolor = colorseq['steady']
 
                 if (setcolor != fit.getcolor()):
                     fit.setcolor(setcolor)
