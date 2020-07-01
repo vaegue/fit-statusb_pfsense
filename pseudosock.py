@@ -11,12 +11,16 @@ import sys
 import os
 import random
 
-if (len(sys.argv) == 2):
+if (len(sys.argv) >= 2):
     arg = sys.argv[1]
-elif (len(sys.argv) < 2):
-    raise SystemExit(f'No arguments.\n Valid options [ up, down, updown, steady, off, on, 50 ]')
+    sarg = None
+    if (arg == 'steady' or 'flat'):
+        sarg = 50
+        if (len(sys.argv) == 3):
+            sarg = int(sys.argv[2])
+
 else:
-    raise SystemExit(f'Invalid number of args ({len(sys.argv)-1}).\n Valid options [ up, down, updown, steady, off, on, 50 ]')
+    raise SystemExit('Invalid arguments.\n Valid options [ up, down, updown, steady {percent}, flat {percent}, off, on, 50 ]')
 
 host = './sock_test.sock'
 
@@ -41,8 +45,12 @@ count = 0
 
 
 # Generator for testing against loss trends
-def downgen(pattern: str = '50'):
-    print(f'----------------\n{pattern}\n----------------')
+def downgen(pattern: str = '50', perc: int = 50):
+    if (perc is not None):
+        title = f'{pattern} {str(perc)}'
+    else:
+        title = pattern
+    print(f'----------------\n{title}\n----------------')
     # I know. I also don't care.
     # fixme: after this cycles, it exits on 'else'
     # OUTPUT: Invalid argument (updown).
@@ -75,15 +83,15 @@ def downgen(pattern: str = '50'):
 
     if (pattern == 'down'):
         stp = 0
-        stpm = stp+5
+        stpm = stp + 5
         retvar = 0
         while (retvar < 100):
             retvar = stp = random.randint(stp, stpm)
-            stpm = stp+5
+            stpm = stp + 5
             if (retvar > 100):
-                yield(100)
+                yield (100)
             else:
-                yield(retvar)
+                yield (retvar)
     elif (pattern == 'up'):
         stp = 100
         stpm = stp - 5
@@ -92,39 +100,41 @@ def downgen(pattern: str = '50'):
             retvar = stp = random.randint(stpm, stp)
             stpm = stp - 5
             if (retvar < 0):
-                yield(0)
+                yield (0)
             else:
-                yield(retvar)
+                yield (retvar)
     elif (pattern == 'steady'):
-        stp = 50
+        stp = perc
         while True:
             choice = random.choice([1, -1, 0, 0])
             retvar = stp + choice
             if (retvar > 0 or retvar < 100):
-                yield(retvar)
+                yield (retvar)
             elif (retvar > 100):
-                yield(100)
+                yield (100)
             elif (retvar < 0):
-                yield(0)
+                yield (0)
+    elif (pattern == 'flat'):
+        while True:
+            yield(perc)
     elif (pattern == 'off'):
         while True:
-            yield(100)
+            yield (100)
     elif (pattern == 'on'):
         while True:
-            yield(0)
+            yield (0)
     elif (pattern == '50'):
         while True:
-            yield(50)
+            yield (50)
     else:
         # this seems to fix weird exit with 'updown'
-        yield(100)
+        yield (100)
 
 
 while True:
     eprint('Waiting for connection')
     while True:
-
-        for loss in downgen(arg):
+        for loss in downgen(arg, sarg):
             count = count + 1
 
             connection, client = sock.accept()
