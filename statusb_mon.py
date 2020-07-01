@@ -59,6 +59,7 @@ prev_loss = 100
 diff_log = []
 ave_diff = 0
 # Loss threshholds for full-up/down
+# fixme: does not work as intended
 up_thresh = 0
 down_thresh = 100
 
@@ -177,12 +178,14 @@ while True:
                     setcolor = colorseq['up']
                 elif (ave_diff < -sensitivity):
                     setcolor = colorseq['down']
-                elif (ave_diff == 0 and dping_loss >= up_thresh):
+                elif ((ave_diff == 0) and (dping_loss >= down_thresh)):
                     setcolor = green
-                elif (ave_diff == 0 and dping_loss <= down_thresh):
+                elif ((ave_diff == 0) and (dping_loss <= up_thresh)):
                     setcolor = red
-                elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):  # fixme: lt or eq to thresh
+                elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < down_thresh or dping_loss > up_thresh)):
                     setcolor = colorseq['steady']
+                else:  # Dunno!
+                    setcolor = fuscia
 
                 if (setcolor != fit.getcolor()):
                     fit.setcolor(setcolor)
