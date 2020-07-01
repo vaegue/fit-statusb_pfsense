@@ -35,12 +35,12 @@ count = 0
 
 
 # Generator for testing against loss trends
-def downgen(direction: str = '50'):
-    print(f'----------------\n{direction}\n----------------')
+def downgen(pattern: str = '50'):
+    print(f'----------------\n{pattern}\n----------------')
     # I know. I also don't care.
     # fixme: after this cycles, it exits on 'else'
     # OUTPUT: Invalid argument (updown).
-    if (direction == 'updown'):
+    if (pattern == 'updown'):
         # UP
         print('----------------\nTREND UP\n----------------')
         stp = 100
@@ -67,7 +67,7 @@ def downgen(direction: str = '50'):
             else:
                 yield (retvar)
 
-    if (direction == 'down'):
+    if (pattern == 'down'):
         stp = 0
         stpm = stp+5
         retvar = 0
@@ -78,7 +78,7 @@ def downgen(direction: str = '50'):
                 yield(100)
             else:
                 yield(retvar)
-    elif (direction == 'up'):
+    elif (pattern == 'up'):
         stp = 100
         stpm = stp - 5
         retvar = 100
@@ -89,7 +89,7 @@ def downgen(direction: str = '50'):
                 yield(0)
             else:
                 yield(retvar)
-    elif (direction == 'steady'):
+    elif (pattern == 'steady'):
         stp = 50
         while True:
             choice = random.choice([1, -1, 0, 0])
@@ -100,17 +100,18 @@ def downgen(direction: str = '50'):
                 yield(100)
             elif (retvar < 0):
                 yield(0)
-    elif (direction == 'off'):
+    elif (pattern == 'off'):
         while True:
             yield(100)
-    elif (direction == 'on'):
+    elif (pattern == 'on'):
         while True:
             yield(0)
-    elif (direction == '50'):
+    elif (pattern == '50'):
         while True:
             yield(50)
     else:
-        raise SystemExit(f'Invalid argument ({direction}).\n Valid options [ up, down, updown, steady, off, on, 50 ]')
+        # this seems to fix weird exit with 'updown'
+        yield(100)
 
 
 while True:
