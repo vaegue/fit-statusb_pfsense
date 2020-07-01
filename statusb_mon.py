@@ -28,15 +28,44 @@ serialargs = dict(
     stopbits=serial.STOPBITS_ONE,
     timeout=1
 )
+
+pulse = str('100')
+# Purely for ease of typing
+red = '#FF0000'
+green = '#00FF00'
+blue = '#0000FF'
+yellow = '#FF4100'
+orange = '#E00A00'
+black = '#000000'
+white = '#FFFFFF'
+teal = '#00903F'
+fuscia = '#FF0044'
+purple = '#700070'
+
+colorcode = dict(
+    down=f'B{yellow}-{pulse}{red}',
+    up=f'B{yellow}-{pulse}{green}',
+    steady=f'B{teal}-{pulse}{yellow}'
+)
+
 # Some defaults
 pollinterval = 1
 duration = 1000
+sensitivity = .5
 sockcon = None
+# Startup assuming 100 percent loss
+prev_loss = 100
+diff_log = []
+ave_diff = 0
+# Loss threshholds for full-up/down
+up_thresh = 0
+down_thresh = 100
 
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
 # TODO: What if gateway changes?
 sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
+# sockpath = ['./sock_test.sock']
 
 
 # Forgive me. I'm learning =)
@@ -66,12 +95,13 @@ class FitStatUSB:
         return(self.fit_id)
 
     def setcolor(self, color: str):
-        if (color == self.color):
-            return
-        else:
-            self.color = color
-            self.sendcmd(color)
-            return
+        # Moved tihs check outside of class
+        # if (color == self.color):
+        #     return
+        # else:
+        self.color = color
+        self.sendcmd(color)
+        return
 
     def sendcmd(self, cmd: str):
         self.cmd = cmd
@@ -88,7 +118,7 @@ class FitStatUSB:
         self.ser.write(self.cmdstring.encode())
         # flush for stability
         self.ser.flush()
-        print(f'Sending command: {self.cmdstring}')
+        print(f'Sending command: {self.cmdstring.strip()}')
         # This seems to clear the input buffer so it doesn't freeze up
         self.ser.read_all()
         self.ser.close()
@@ -112,14 +142,17 @@ while True:
     try:
         if os.path.exists(sockpath[0]):
             sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            # print(f'connecting to: {sockpath[0]}')
             sockcon.connect(sockpath[0])
         else:
             print(f'Could not connect to {sockpath[0]}')
             continue
 
         while True:
+            # print(f'receving data from: {sockpath[0]}')
             sockdata = sockcon.recv(64)
             if sockdata:
+                # print(f'sockdata: {sockdata.decode()}')
                 # {gw_name} {lat_ave} {lat_std_dev} {loss}
                 # WAN_DHCP 1168 613 0
                 # b'WAN_DHCP 1168 613 0\n'
@@ -127,23 +160,45 @@ while True:
                 # We only really care about loss for now
                 dping_loss = int(dping_res['loss'])
                 count = count + 1
+                cur_diff = prev_loss - dping_loss
+                prev_loss = dping_loss
+                diff_log.append(cur_diff)
+                if (len(diff_log) > 6):
+                    diff_log.pop(0)
 
-                if(dping_loss > 0):
-                    print(f"loss: {dping_res['loss']}, count: {count}")
+                ave_diff = sum(diff_log)/len(diff_log)
+                if (dping_loss > 0):
+                    msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
+                    print(msg)
 
-                # TODO: check trend and react accordingly
-                if (dping_loss == 0):
-                    fit.setcolor('#00FF00')
-                elif(0 < dping_loss < 11):
-                    fit.setcolor('#DA1600')
-                elif(10 < dping_loss < 31):
-                    fit.setcolor('#DA0800')
-                elif(dping_loss > 30):
-                    fit.setcolor('#FF0000')
-                else:
-                    fit.setcolor('#0000FF')
+                setcolor = None
+                if (ave_diff > sensitivity):
+                    setcolor = colorcode['up']
+                elif (ave_diff < -sensitivity):
+                    setcolor = colorcode['down']
+                elif (ave_diff == 0 and dping_loss >= up_thresh):
+                    setcolor = green
+                elif (ave_diff == 0 and dping_loss <= down_thresh):
+                    setcolor = red
+                elif ((-sensitivity < ave_diff < sensitivity) and dping_loss != (0 or 100)):  # fixme: lt or eq to thresh
+                    setcolor = colorcode['steady']
+
+                if (setcolor != fit.getcolor()):
+                    fit.setcolor(setcolor)
+                # Should probably trash this
+                # if (cur_diff > 0):
+                #     fit.setcolor(colorcode['up'])
+                # elif (cur_diff < 0):
+                #     fit.setcolor(colorcode['down'])
+                # elif (cur_diff == 0 and dping_loss == 0):
+                #     fit.setcolor(green)
+                # elif (cur_diff == 0 and dping_loss == 100):
+                #     fit.setcolor(red)
+                # elif (cur_diff == 0 and dping_loss != (0 or 100)):
+                #     fit.setcolor(colorcode['steady'])
                 # print(f'Color: {fit.getcolor()}')
                 # print(f'Count: {count}')
+
             else:
                 # No data, move along
                 break
