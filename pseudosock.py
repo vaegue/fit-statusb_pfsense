@@ -1,4 +1,10 @@
 # create pseudo-socket to send specific data to statusb_mon for testing
+# This script is for testing the main 'statusb_mon.py' with consistent, predictable patterns of ping loss
+# it creates a unix socket (./sock_test.sock) that outputs in the same format as dpinger.
+# You can connect to it by changing the 'sockpath' variable in 'statusb_mon.py' to point to this test socket.
+#
+# Run script with '[pythonexe] pseudosock.py {up, down, updown, steady, off, on, 50}
+# example on pfSense: python37 pseudosock.py updown
 
 import socket
 import sys
