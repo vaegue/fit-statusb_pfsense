@@ -66,8 +66,10 @@ down_thresh = 100
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
 # TODO: What if gateway changes?
-sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
-# sockpath = ['./sock_test.sock']
+if os.path.exists('./sock_test.sock'):
+    sockpath = ['./sock_test.sock']
+else:
+    sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
 
 
 # Forgive me. I'm learning =)
@@ -178,9 +180,9 @@ while True:
                     setcolor = colorseq['up']
                 elif (ave_diff < -sensitivity):
                     setcolor = colorseq['down']
-                elif ((ave_diff == 0) and (dping_loss >= down_thresh)):
+                elif ((ave_diff == 0) and (dping_loss <= down_thresh)):
                     setcolor = green
-                elif ((ave_diff == 0) and (dping_loss <= up_thresh)):
+                elif ((ave_diff == 0) and (dping_loss >= up_thresh)):
                     setcolor = red
                 elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < down_thresh or dping_loss > up_thresh)):
                     setcolor = colorseq['steady']
