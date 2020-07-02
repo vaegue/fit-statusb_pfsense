@@ -3,8 +3,8 @@
 # it creates a unix socket (./sock_test.sock) that outputs in the same format as dpinger.
 # You can connect to it by changing the 'sockpath' variable in 'statusb_mon.py' to point to this test socket.
 #
-# Run script with '[pythonexe] pseudosock.py {up, down, updown, steady, off, on, 50}
-# example on pfSense: python37 pseudosock.py updown
+# Run script with '[pythonexe] pseudosock.py [ up, down, updown, off, on, steady {percent}, flat {percent}, {percent} ]
+# example on pfSense: python3.7 pseudosock.py updown
 
 import socket
 import sys
@@ -20,7 +20,7 @@ if (len(sys.argv) >= 2):
         if (len(sys.argv) == 3):
             sarg = int(sys.argv[2])
 else:
-    raise SystemExit('Invalid arguments.\n Valid options [ up, down, updown, steady {percent}, flat {percent}, off, on, {percent} ]')
+    raise SystemExit('Invalid arguments.\n Valid options [ up, down, updown, off, on, steady {percent}, flat {percent}, {percent} ]')
 
 sockfile = './sock_test.sock'
 
