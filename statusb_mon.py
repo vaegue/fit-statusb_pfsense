@@ -62,8 +62,8 @@ diff_log = deque([])
 ave_diff = 0
 # Loss threshholds for full-up/down
 # fixme: does not work as intended
-up_thresh = 0
-down_thresh = 100
+high_thresh = 100
+low_thresh = 0
 
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
@@ -183,11 +183,11 @@ while True:
                     setcolor = colorseq['up']
                 elif (ave_diff < -sensitivity):
                     setcolor = colorseq['down']
-                elif ((ave_diff == 0) and (dping_loss <= down_thresh)):
+                elif ((ave_diff == 0) and (dping_loss <= low_thresh)):
                     setcolor = green
-                elif ((ave_diff == 0) and (dping_loss >= up_thresh)):
+                elif ((ave_diff == 0) and (dping_loss >= high_thresh)):
                     setcolor = red
-                elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < down_thresh or dping_loss > up_thresh)):
+                elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < high_thresh or dping_loss > low_thresh)):
                     setcolor = colorseq['steady']
                 else:  # Dunno!
                     setcolor = fuscia

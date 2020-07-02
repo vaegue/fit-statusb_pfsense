@@ -14,12 +14,13 @@ import random
 if (len(sys.argv) >= 2):
     arg = sys.argv[1]
     sarg = None
-    if (arg == 'steady' or 'flat'):
+    print(arg)
+    if (arg is ('steady' or 'flat')):
         sarg = 50
         if (len(sys.argv) == 3):
             sarg = int(sys.argv[2])
 else:
-    raise SystemExit('Invalid arguments.\n Valid options [ up, down, updown, steady {percent}, flat {percent}, off, on, 50 ]')
+    raise SystemExit('Invalid arguments.\n Valid options [ up, down, updown, steady {percent}, flat {percent}, off, on, {percent} ]')
 
 sockfile = './sock_test.sock'
 
@@ -44,14 +45,13 @@ count = 0
 
 
 # Generator for testing against loss trends
-def downgen(pattern: str = '50', perc: int = 50):
+def downgen(pattern: str = '50', perc: int = None):
     if (perc is not None):
         title = f'{pattern} {str(perc)}'
     else:
         title = pattern
     print(f'----------------\n{title}\n----------------')
     # I know. I also don't care.
-    # fixme: after this cycles, it exits on 'else'
     # OUTPUT: Invalid argument (updown).
     if (pattern == 'updown'):
         # UP
@@ -113,18 +113,8 @@ def downgen(pattern: str = '50', perc: int = 50):
                 yield (100)
             elif (retvar < 0):
                 yield (0)
-    elif (pattern == 'flat'):
-        while True:
-            yield(perc)
-    elif (pattern == 'off'):
-        while True:
-            yield (100)
-    elif (pattern == 'on'):
-        while True:
-            yield (0)
-    elif (pattern == '50'):
-        while True:
-            yield (50)
+    elif (pattern.isnumeric()):
+        yield (int(pattern))
     else:
         # this seems to fix weird exit with 'updown'
         yield (100)
