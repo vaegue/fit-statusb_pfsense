@@ -13,6 +13,8 @@ import time
 import socket
 import glob
 
+from collections import deque
+
 import serial
 
 # define serial device.
@@ -56,7 +58,7 @@ sensitivity = .5
 sockcon = None
 # Startup assuming 100 percent loss
 prev_loss = 100
-diff_log = []
+diff_log = deque([])
 ave_diff = 0
 # Loss threshholds for full-up/down
 # fixme: does not work as intended
@@ -168,12 +170,13 @@ while True:
                 prev_loss = dping_loss
                 diff_log.append(cur_diff)
                 if (len(diff_log) > 6):
-                    diff_log.pop(0)
+                    diff_log.popleft()
 
                 ave_diff = sum(diff_log)/len(diff_log)
                 if (dping_loss > 0):
                     msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
                     print(msg)
+                    print(diff_log)
 
                 setcolor = None
                 if (ave_diff > sensitivity):
