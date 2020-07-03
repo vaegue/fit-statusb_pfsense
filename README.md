@@ -5,4 +5,4 @@ This currently functions (pfSense 2.4.5), but it is ugly.
 - up to user how to start it for now (still under development)
 - no install instructions. not sure best way to start service in pfSense
 - no graceful error handling (good LUCK!)
-- requires `pkg install py37-serial` (pfsense)
+- requires pyserial (`pkg install py37-serial` on pfsense)
