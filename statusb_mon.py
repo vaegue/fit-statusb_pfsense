@@ -7,21 +7,39 @@
 # fit-statusb is a very inexpensive ($9~$12) RGB LED 'blinker' that
 # can be controlled by sending simple commands to a serial port.
 # fit-statusb can be found at https://fit-iot.com/web/product/fit-statusb/
+#
+# TODO: find out what pfsense does if serial console is enabled
+# TODO: make configurable?
+# TODO: handle more than one fit device (need to buy another one)
 
 import os
 import time
 import socket
 import glob
+import logging
+import argparse
 
 from collections import deque
 
 import serial
 
+parser = argparse.ArgumentParser()
+parser.add_argument('-l', '--log', help='set logging.level (debug, info ...)', type=str)
+args = parser.parse_args()
+if args.log:
+    logpart = args.log
+    print(f'Loglevel set to {logpart.upper()}')
+else:
+    logpart = 'WARNING'
+
+num_loglevel = getattr(logging, logpart.upper(), None)
+if not isinstance(num_loglevel, int):
+    raise ValueError(f'Invalid log level: {logpart.upper()}')
+
+# TODO: logging to file?
+logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
+
 # define serial device.
-# TODO: logging?
-# TODO: find out what pfsense does if serial console is enabled
-# TODO: make configurable?
-# TODO: handle more than one fit device (need to buy another one)
 serialdev = '/dev/cuaU0'
 serialargs = dict(
     port=serialdev,
@@ -70,8 +88,10 @@ low_thresh = 0
 # TODO: What if gateway changes?
 if os.path.exists('./sock_test.sock'):
     sockpath = ['./sock_test.sock']
+    logging.info(f'using debug/test socket {sockpath[0]}')
 else:
     sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
+    logging.info(f'Found dpinger socket: {sockpath[0]}')
 
 
 # Forgive me. I'm learning =)
@@ -105,6 +125,7 @@ class FitStatUSB:
         # if (color == self.color):
         #     return
         # else:
+        logging.info(f'Setcolor: {color}')
         self.color = color
         self.sendcmd(color)
         return
@@ -124,7 +145,7 @@ class FitStatUSB:
         self.ser.write(self.cmdstring.encode())
         # flush for stability
         self.ser.flush()
-        print(f'Sending command: {self.cmdstring.strip()}')
+        logging.debug(f'Sending command: {self.cmdstring.strip()}')
         # This seems to clear the input buffer so it doesn't freeze up
         self.ser.read_all()
         self.ser.close()
@@ -133,7 +154,7 @@ class FitStatUSB:
     def setfade(self, dur: int):
         self.dur = 'F'+str(dur)
         self.sendcmd(self.dur)
-        print(f'setfade: {self.dur}')
+        logging.debug(f'setfade: {self.dur}')
         return
 
 
@@ -148,17 +169,16 @@ while True:
     try:
         if os.path.exists(sockpath[0]):
             sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            # print(f'connecting to: {sockpath[0]}')
+            logging.debug(f'connecting to: {sockpath[0]}')
             sockcon.connect(sockpath[0])
         else:
-            print(f'Could not connect to {sockpath[0]}')
+            logging.error(f'Could not connect to {sockpath[0]}')
             continue
 
         while True:
-            # print(f'receving data from: {sockpath[0]}')
             sockdata = sockcon.recv(64)
             if sockdata:
-                # print(f'sockdata: {sockdata.decode()}')
+                logging.debug(f'sockdata: {sockdata.decode()}')
                 # {gw_name} {lat_ave} {lat_std_dev} {loss}
                 # WAN_DHCP 1168 613 0
                 # b'WAN_DHCP 1168 613 0\n'
@@ -175,13 +195,12 @@ while True:
                 ave_diff = sum(diff_log)/len(diff_log)
                 if (dping_loss > 0):
                     msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
-                    print(msg)
-                    print(diff_log)
+                    logging.info(msg)
 
                 setcolor = None
-                if (ave_diff > sensitivity):
+                if (ave_diff >= sensitivity):
                     setcolor = colorseq['up']
-                elif (ave_diff < -sensitivity):
+                elif (ave_diff <= -sensitivity):
                     setcolor = colorseq['down']
                 elif ((ave_diff == 0) and (dping_loss <= low_thresh)):
                     setcolor = green
@@ -190,23 +209,15 @@ while True:
                 elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < high_thresh or dping_loss > low_thresh)):
                     setcolor = colorseq['steady']
                 else:  # Dunno!
+                    msg = f'ave_diff: {ave_diff}\n' \
+                          f'dping_loss: {dping_loss}\n' \
+                          f'high_thresh: {high_thresh}\n' \
+                          f'low_thresh: {low_thresh}'
+                    logging.warning(f'======== CODE FUSCIA! ========\n{msg}')
                     setcolor = fuscia
 
                 if (setcolor != fit.getcolor()):
                     fit.setcolor(setcolor)
-                # Should probably trash this
-                # if (cur_diff > 0):
-                #     fit.setcolor(colorcode['up'])
-                # elif (cur_diff < 0):
-                #     fit.setcolor(colorcode['down'])
-                # elif (cur_diff == 0 and dping_loss == 0):
-                #     fit.setcolor(green)
-                # elif (cur_diff == 0 and dping_loss == 100):
-                #     fit.setcolor(red)
-                # elif (cur_diff == 0 and dping_loss != (0 or 100)):
-                #     fit.setcolor(colorcode['steady'])
-                # print(f'Color: {fit.getcolor()}')
-                # print(f'Count: {count}')
 
             else:
                 # No data, move along
@@ -215,11 +226,12 @@ while True:
     # Just catch it all for now.
     except Exception as msg:
         if hasattr(msg, 'message'):
-            print(msg.message)
+            logging.error(msg.message)
             continue
         else:
-            print(msg)
+            logging.error(msg)
             continue
     finally:
         if(sockcon):
+            logging.debug(f'Closing connection {sockpath}')
             sockcon.close()
