@@ -1,5 +1,5 @@
 #!/usr/local/bin/python3.7
-
+#
 # Monitor and control script to utilize fit-statusb device on pfSense.
 # Initially to monitor 'loss' from dpinger, and give simple visual
 # indiciator of WAN status.
@@ -50,7 +50,7 @@ serialargs = dict(
 )
 
 # fixme: organize these
-pulse = str('100')
+pulse = '100'
 # Purely for ease of typing
 red = '#FF0000'
 green = '#00FF00'
@@ -135,12 +135,20 @@ class FitStatUSB:
         self.cmdstring = self.cmd+'\n'
         # Setup serial connection
         self.ser = serial.Serial()
-        self.ser.port = self.ttyargs['port']
+        if os.path.exists(self.ttyargs['port']):
+            self.ser.port = self.ttyargs['port']
+        else:
+            logging.warning(f'Serial port not found: {self.ttyargs["port"]}')
+            return
         self.ser.parity = self.ttyargs['parity']
         self.ser.baudrate = self.ttyargs['baudrate']
         self.ser.stopbits = self.ttyargs['stopbits']
         self.ser.timeout = self.ttyargs['timeout']
-        self.ser.open()
+        try:
+            self.ser.open()
+        except Exception as msg:
+            logging.warning(f'Could not open serial port: {self.ttyargs["port"]}\n{msg}')
+            return
         # Send binary of command string
         self.ser.write(self.cmdstring.encode())
         # flush for stability
