@@ -50,7 +50,7 @@ serialargs = dict(
 )
 
 # fixme: organize these
-pulse = str('100')
+pulse = '100'
 # Purely for ease of typing
 red = '#FF0000'
 green = '#00FF00'
