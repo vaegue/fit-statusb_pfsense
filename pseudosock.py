@@ -47,7 +47,7 @@ count = 0
 
 
 # Generator for testing against loss trends
-def downgen(pattern: str = '50', perc: int = None):
+def downgen(pattern: str = 'updown', perc: int = None):
     if (perc is not None):
         title = f'{pattern} {str(perc)}'
     else:
@@ -69,6 +69,10 @@ def downgen(pattern: str = '50', perc: int = None):
             else:
                 yield (retvar)
 
+        print('----------------\n15 at 0\n----------------')
+        for i in range(0, 15):
+            yield (0)
+
         # DOWN
         print('----------------\nTREND DN\n----------------')
         stp = 0
@@ -81,6 +85,10 @@ def downgen(pattern: str = '50', perc: int = None):
                 yield (100)
             else:
                 yield (retvar)
+
+    print('----------------\n15 at 100\n----------------')
+    for i in range(0, 15):
+        yield (100)
 
     if (pattern == 'down'):
         stp = 0
