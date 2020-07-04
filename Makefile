@@ -13,7 +13,7 @@ COMMENT=	pfSense package statusb_mon
 
 LICENSE=	APACHE20
 
-RUN_DEPENDS=	${LOCALBASE}/bin/statusb_mon:sysutils/statusb_mon
+RUN_DEPENDS=	${LOCALBASE}/bin/statusb_mon.py:sysutils/statusb_mon
 
 NO_BUILD=	yes
 NO_MTREE=	yes
