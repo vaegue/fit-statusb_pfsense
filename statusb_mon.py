@@ -138,7 +138,7 @@ class FitStatUSB:
         if os.path.exists(self.ttyargs['port']):
             self.ser.port = self.ttyargs['port']
         else:
-            logging.info(f'Serial port not found: {self.ttyargs["port"]}')
+            logging.warning(f'Serial port not found: {self.ttyargs["port"]}')
             return
         self.ser.parity = self.ttyargs['parity']
         self.ser.baudrate = self.ttyargs['baudrate']
@@ -147,7 +147,7 @@ class FitStatUSB:
         try:
             self.ser.open()
         except Exception as msg:
-            logging.info(f'Could not open serial port: {self.ttyargs["port"]}\n{msg}')
+            logging.warning(f'Could not open serial port: {self.ttyargs["port"]}\n{msg}')
             return
         # Send binary of command string
         self.ser.write(self.cmdstring.encode())
