@@ -25,19 +25,19 @@ function statusb_mon_rcfile() {
 	global $config;
 	$statusb_mon_config = $config['installedpackages']['statusb_mon']['config'][0];
 	$stop = <<<EOD
-if [ `/bin/pgrep statusb_mon | /usr/bin/wc -l` != 0 ]; then
-		/usr/bin/killall -9 statusb_mon
-		while [ `/bin/pgrep statusb_mon | /usr/bin/wc -l` != 0 ]; do
+if [ `/bin/pgrep statusb_mon.py | /usr/bin/wc -l` != 0 ]; then
+		/usr/bin/killall -9 statusb_mon.py
+		while [ `/bin/pgrep statusb_mon.py | /usr/bin/wc -l` != 0 ]; do
 			sleep 1
 		done
 	fi
 EOD;
 
 	$start = "{$stop}\n";
-	if (($statusb_mon_config['enable_led2']) && ($statusb_mon_config['iface_led2']))
-		$start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led2']), 2, true) . "\n";
-	if (($statusb_mon_config['enable_led3']) && ($statusb_mon_config['iface_led3']))
-		$start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led3']), 3, true) . "\n";
+	// if (($statusb_mon_config['enable_led2']) && ($statusb_mon_config['iface_led2']))
+		// $start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led2']), 2, true) . "\n";
+	// if (($statusb_mon_config['enable_led3']) && ($statusb_mon_config['iface_led3']))
+		// $start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led3']), 3, true) . "\n";
 
 	write_rcfile(array(
 		'file' => 'statusb_mon.sh',
@@ -54,20 +54,20 @@ function sync_package_statusb_mon() {
 	$statusb_mon_config = $config['installedpackages']['statusb_mon']['config'][0];
 	/* If the service (being) disabled, stop it (if running) and do nothing else */
 	if (!($statusb_mon_config['enable'])) {
-		if (is_process_running("statusb_mon")) {
+		if (is_process_running("statusb_mon.py")) {
 			stop_service("statusb_mon");
 		}
 		return;
 	}
 	/* Kill all instances of statusb_mon */
-	if (is_process_running("statusb_mon")) {
+	if (is_process_running("statusb_mon.py")) {
 		stop_service("statusb_mon");
 	}
 	start_service("statusb_mon");
 }
 
 function statusb_mon_launch($int, $led, $return = false) {
-	$cmd = "/usr/local/bin/statusb_mon -i " . escapeshellarg($int) . " -l " . escapeshellarg("/dev/led/led{$led}");
+	$cmd = "/usr/local/bin/statusb_mon.py");
 	if ($return) {
 		return $cmd;
 	} else {
@@ -75,13 +75,13 @@ function statusb_mon_launch($int, $led, $return = false) {
 	}
 }
 
-function validate_form_statusb_mon($post, &$input_errors) {
+// function validate_form_statusb_mon($post, &$input_errors) {
 	/* Make sure both aren't using the same interface */
-	if (($post['iface_led2']) && ($post['iface_led3']) &&
-	    (($post['enable_led2']) && ($post['enable_led3'])) &&
-	    ($post['iface_led2'] == $post['iface_led3'])) {
-		$input_errors[] = 'You cannot set two LEDs for a single interface. Please choose seperate interfaces.';
-	}
-}
+	// if (($post['iface_led2']) && ($post['iface_led3']) &&
+	    // (($post['enable_led2']) && ($post['enable_led3'])) &&
+	    // ($post['iface_led2'] == $post['iface_led3'])) {
+		// $input_errors[] = 'You cannot set two LEDs for a single interface. Please choose seperate interfaces.';
+	// }
+// }
 
 ?>
