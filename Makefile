@@ -13,7 +13,7 @@ COMMENT=	pfSense package statusb_mon
 
 LICENSE=	APACHE20
 
-RUN_DEPENDS=	${LOCALBASE}/bin/statusb_mon.py:sysutils/statusb_mon
+#RUN_DEPENDS=	${LOCALBASE}/bin/statusb_mon.py:sysutils/statusb_mon
 
 NO_BUILD=	yes
 NO_MTREE=	yes
@@ -25,6 +25,7 @@ do-extract:
 	${MKDIR} ${WRKSRC}
 
 do-install:
+	${MKDIR} ${STAGEDIR}${PREFIX}/bin
 	${MKDIR} ${STAGEDIR}${PREFIX}/pkg
 	${MKDIR} ${STAGEDIR}/etc/inc/priv
 	${MKDIR} ${STAGEDIR}${DATADIR}
@@ -32,6 +33,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
 		${STAGEDIR}${PREFIX}/pkg
+	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
+		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/statusb_mon.priv.inc \
 		${STAGEDIR}/etc/inc/priv
 	${INSTALL_DATA} ${FILESDIR}${DATADIR}/info.xml \
