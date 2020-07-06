@@ -33,7 +33,7 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
 		${STAGEDIR}${PREFIX}/pkg
-	${INSTALLPROGRAM} -m 0755 ${FILESDIR}${PREFIX}/bin/statusb_mon.py \
+	${INSTALL} -m 0755 ${FILESDIR}${PREFIX}/bin/statusb_mon.py \
 		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
 		${STAGEDIR}${PREFIX}/bin
