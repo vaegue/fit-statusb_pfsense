@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.7
+#!/usr/bin/env python3.7
 #
 # Monitor and control script to utilize fit-statusb device on pfSense.
 # Initially to monitor 'loss' from dpinger, and give simple visual
@@ -25,19 +25,30 @@ import serial
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--log', help='set logging.level (debug, info ...)', type=str)
+parser.add_argument('-lf', '--logfile', help='logfile', type=str)
 args = parser.parse_args()
 if args.log:
     logpart = args.log
-    print(f'Loglevel set to {logpart.upper()}')
+    # print(f'Loglevel set to {logpart.upper()}')
 else:
-    logpart = 'WARNING'
+    logpart = 'ERROR'
+
+if args.logfile:
+    logfile = args.logfile
+    # print(f'Logging to file: {logfile}')
+    logpart = 'INFO'
+    # print(f'Loglevel set to {logpart.upper()}')
+else:
+    logfile = None
 
 num_loglevel = getattr(logging, logpart.upper(), None)
 if not isinstance(num_loglevel, int):
     raise ValueError(f'Invalid log level: {logpart.upper()}')
 
-# TODO: logging to file?
-logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
+if logfile is not None:
+    logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel, filename=logfile)
+else:
+    logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
 
 # define serial device.
 serialdev = '/dev/cuaU0'
