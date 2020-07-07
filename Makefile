@@ -14,7 +14,7 @@ COMMENT=	pfSense package statusb_mon
 LICENSE=	APACHE20
 
 RUN_DEPENDS=	${LOCALBASE}/bin/dpinger:net/dpinger \
-				${LOCALBASE}/lib/python3.7/site-packages/serial/serialposix.py:comms/py37-serial
+				${LOCALBASE}/lib/python3.7/site-packages/serial/serialposix.py:comms/py-serial
 
 NO_BUILD=	yes
 NO_MTREE=	yes
