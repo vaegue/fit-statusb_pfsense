@@ -36,6 +36,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL} -m 0755 ${FILESDIR}${PREFIX}/bin/statusb_mon.py \
 		${STAGEDIR}${PREFIX}/bin
+	${INSTALL} -m 0755 ${FILESDIR}${PREFIX}/bin/pseudosock.py \
+		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
 		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/statusb_mon.priv.inc \
