@@ -29,15 +29,15 @@
 	<name>statusb_mon</name>
 	<include_file>/usr/local/pkg/statusb_mon.inc</include_file>
 	<menu>
-		<name>StatUSB Mon</name>
+		<name>statusb_mon</name>
 		<tooltiptext>WAN status on fit-StatUSB.</tooltiptext>
 		<section>Interfaces</section>
-		<url>/pkg_edit.php?xml=statusb_mon.xml&amp;id=0</url>
+		<url>/pkg_edit.php?xml=statusb_mon.xml</url>
 	</menu>
 	<service>
 		<name>statusb_mon</name>
 		<rcfile>statusb_mon.sh</rcfile>
-		<executable>statusb_mon</executable>
+		<executable>statusb_mon.py</executable>
 		<description>WAN status LED Daemon</description>
 	</service>
 	<fields>
@@ -53,11 +53,11 @@
 			<fieldname>enable_mon</fieldname>
 			<type>checkbox</type>
 		</field>
-		<field>
+		<!-- <field>
 			<fielddescr>Enable field 3</fielddescr>
 			<fieldname>enable_field3</fieldname>
 			<type>checkbox</type>
-		</field>
+		</field> -->
 	</fields>
 	<!-- <custom_php_validation_command>
 		validate_form_statusb_mon($_POST, $input_errors);
