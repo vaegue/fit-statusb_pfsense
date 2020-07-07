@@ -3,6 +3,6 @@ Hopefully the start of a working [fit-statusb](https://fit-iot.com/web/product/f
 
 This currently functions (pfSense 2.4.5), but it is ugly.
 - up to user how to start it for now (still under development)
-- no install instructions. not sure best way to start service in pfSense
+- git clone into ports, make package and transfer to firewall. install with `pkg add`
 - no graceful error handling (good LUCK!)
-- requires pyserial (`pkg install py37-serial` on pfsense)
+- requires pyserial, which should be pulled in as a dependancy
