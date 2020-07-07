@@ -83,6 +83,14 @@ ave_diff = 0
 high_thresh = 100
 low_thresh = 0
 
+pid = str(os.getpid())
+pidfile = '/var/run/statusb_mon.pid'
+try:
+    open(pidfile, 'w').write(pid)
+except Exception as msg:
+    logging.warning(f'Cannot open pid file: {pidfile}\n\t{msg}')
+    raise SystemExit
+
 # Path to dpinger socket file
 # TODO: What to do about multiple WANs?
 # TODO: What if gateway changes?
@@ -169,77 +177,86 @@ class FitStatUSB:
 count = 0
 fit = FitStatUSB(serialargs, duration)
 
+try:
+    while True:
+        time.sleep(pollinterval)
 
-while True:
-    time.sleep(pollinterval)
-
-    # This try doesn't 'feel' right
-    try:
-        if os.path.exists(sockpath[0]):
-            sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            logging.debug(f'connecting to: {sockpath[0]}')
-            sockcon.connect(sockpath[0])
-        else:
-            logging.error(f'Could not connect to {sockpath[0]}')
-            continue
-
-        while True:
-            sockdata = sockcon.recv(64)
-            if sockdata:
-                logging.debug(f'sockdata: {sockdata.decode()}')
-                # {gw_name} {lat_ave} {lat_std_dev} {loss}
-                # WAN_DHCP 1168 613 0
-                # b'WAN_DHCP 1168 613 0\n'
-                dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
-                # We only really care about loss for now
-                dping_loss = int(dping_res['loss'])
-                count = count + 1
-                cur_diff = prev_loss - dping_loss
-                prev_loss = dping_loss
-                diff_log.append(cur_diff)
-                if (len(diff_log) > 6):
-                    diff_log.popleft()
-
-                ave_diff = sum(diff_log)/len(diff_log)
-                if (dping_loss > 0):
-                    msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
-                    logging.info(msg)
-
-                setcolor = None
-                if (ave_diff >= sensitivity):
-                    setcolor = colorseq['up']
-                elif (ave_diff <= -sensitivity):
-                    setcolor = colorseq['down']
-                elif ((ave_diff == 0) and (dping_loss <= low_thresh)):
-                    setcolor = green
-                elif ((ave_diff == 0) and (dping_loss >= high_thresh)):
-                    setcolor = red
-                elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < high_thresh or dping_loss > low_thresh)):
-                    setcolor = colorseq['steady']
-                else:  # Dunno!
-                    msg = f'ave_diff: {ave_diff}\n' \
-                          f'dping_loss: {dping_loss}\n' \
-                          f'high_thresh: {high_thresh}\n' \
-                          f'low_thresh: {low_thresh}'
-                    logging.warning(f'======== CODE FUSCIA! ========\n{msg}')
-                    setcolor = fuscia
-
-                if (setcolor != fit.getcolor()):
-                    fit.setcolor(setcolor)
-
+        # This try doesn't 'feel' right
+        try:
+            if os.path.exists(sockpath[0]):
+                sockcon = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                logging.debug(f'connecting to: {sockpath[0]}')
+                sockcon.connect(sockpath[0])
             else:
-                # No data, move along
-                break
+                logging.error(f'Could not connect to {sockpath[0]}')
+                continue
 
-    # Just catch it all for now.
-    except Exception as msg:
-        if hasattr(msg, 'message'):
-            logging.error(msg.message)
-            continue
-        else:
-            logging.error(msg)
-            continue
-    finally:
-        if(sockcon):
-            logging.debug(f'Closing connection {sockpath}')
-            sockcon.close()
+            while True:
+                sockdata = sockcon.recv(64)
+                if sockdata:
+                    logging.debug(f'sockdata: {sockdata.decode()}')
+                    # {gw_name} {lat_ave} {lat_std_dev} {loss}
+                    # WAN_DHCP 1168 613 0
+                    # b'WAN_DHCP 1168 613 0\n'
+                    dping_res = dict(zip(('gw', 'lat_ave', 'stdev', 'loss'), sockdata.decode().split()))
+                    # We only really care about loss for now
+                    dping_loss = int(dping_res['loss'])
+                    count = count + 1
+                    cur_diff = prev_loss - dping_loss
+                    prev_loss = dping_loss
+                    diff_log.append(cur_diff)
+                    if (len(diff_log) > 6):
+                        diff_log.popleft()
+
+                    ave_diff = sum(diff_log)/len(diff_log)
+                    if (dping_loss > 0):
+                        msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
+                        logging.info(msg)
+
+                    setcolor = None
+                    if (ave_diff >= sensitivity):
+                        setcolor = colorseq['up']
+                    elif (ave_diff <= -sensitivity):
+                        setcolor = colorseq['down']
+                    elif ((ave_diff == 0) and (dping_loss <= low_thresh)):
+                        setcolor = green
+                    elif ((ave_diff == 0) and (dping_loss >= high_thresh)):
+                        setcolor = red
+                    elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < high_thresh or dping_loss > low_thresh)):
+                        setcolor = colorseq['steady']
+                    else:  # Dunno!
+                        msg = f'ave_diff: {ave_diff}\n' \
+                              f'dping_loss: {dping_loss}\n' \
+                              f'high_thresh: {high_thresh}\n' \
+                              f'low_thresh: {low_thresh}'
+                        logging.warning(f'======== CODE FUSCIA! ========\n{msg}')
+                        setcolor = fuscia
+
+                    if (setcolor != fit.getcolor()):
+                        fit.setcolor(setcolor)
+
+                else:
+                    # No data, move along
+                    break
+
+        # Just catch it all for now.
+        except Exception as msg:
+            if hasattr(msg, 'message'):
+                logging.error(msg.message)
+                continue
+            else:
+                logging.error(msg)
+                continue
+        finally:
+            if(sockcon):
+                logging.debug(f'Closing connection {sockpath}')
+                sockcon.close()
+
+except Exception as msg:
+    if hasattr(msg, 'message'):
+        logging.error(msg.message)
+    else:
+        logging.error(msg)
+finally:
+    logging.info(f'Removing pidfile: {pidfile}')
+    os.unlink(pidfile)
