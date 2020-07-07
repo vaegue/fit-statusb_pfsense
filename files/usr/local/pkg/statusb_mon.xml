@@ -25,13 +25,12 @@
  */
 	]]>
 	</copyright>
-	<title>Interfaces: StatUSB Mon</title>
+	<title>StatUSB Mon</title>
 	<name>statusb_mon</name>
 	<include_file>/usr/local/pkg/statusb_mon.inc</include_file>
 	<menu>
 		<name>statusb_mon</name>
-		<tooltiptext>WAN status on fit-StatUSB.</tooltiptext>
-		<section>Interfaces</section>
+		<section>Services</section>
 		<url>/pkg_edit.php?xml=statusb_mon.xml</url>
 	</menu>
 	<service>
