@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.7
+#!/usr/bin/env python3.7
 #
 # create pseudo-socket to send specific data to statusb_mon for testing
 # This script is for testing the main 'statusb_mon.py' with consistent, predictable patterns of ping loss
