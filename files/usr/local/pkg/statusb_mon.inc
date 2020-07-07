@@ -67,7 +67,7 @@ function sync_package_statusb_mon() {
 }
 
 function statusb_mon_launch($int, $led, $return = false) {
-	$cmd = "/usr/local/bin/statusb_mon.py");
+	$cmd = ("/usr/local/bin/statusb_mon.py");
 	if ($return) {
 		return $cmd;
 	} else {

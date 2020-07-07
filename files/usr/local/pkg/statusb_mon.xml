@@ -31,7 +31,7 @@
 	<menu>
 		<name>StatUSB Mon</name>
 		<tooltiptext>WAN status on fit-StatUSB.</tooltiptext>
-		<section>Section</section>
+		<section>Interfaces</section>
 		<url>/pkg_edit.php?xml=statusb_mon.xml&amp;id=0</url>
 	</menu>
 	<service>
