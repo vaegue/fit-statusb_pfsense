@@ -22,27 +22,27 @@ require_once("config.inc");
 require_once("functions.inc");
 
 function statusb_mon_rcfile() {
-	global $config;
-	$statusb_mon_config = $config['installedpackages']['statusb_mon']['config'][0];
-	$stop = <<<EOD
-if [ `/bin/pgrep statusb_mon.py | /usr/bin/wc -l` != 0 ]; then
-		/usr/bin/killall -9 statusb_mon.py
-		while [ `/bin/pgrep statusb_mon.py | /usr/bin/wc -l` != 0 ]; do
-			sleep 1
-		done
-	fi
-EOD;
-
-	$start = "{$stop}\n";
-	// if (($statusb_mon_config['enable_led2']) && ($statusb_mon_config['iface_led2']))
-		// $start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led2']), 2, true) . "\n";
-	// if (($statusb_mon_config['enable_led3']) && ($statusb_mon_config['iface_led3']))
-		// $start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led3']), 3, true) . "\n";
+//	global $config;
+//	$statusb_mon_config = $config['installedpackages']['statusb_mon']['config'][0];
+//	$stop = <<<EOD
+//if [ `/bin/pgrep statusb_mon.py | /usr/bin/wc -l` != 0 ]; then
+//		/usr/bin/killall -9 statusb_mon.py
+//		while [ `/bin/pgrep statusb_mon.py | /usr/bin/wc -l` != 0 ]; do
+//			sleep 1
+//		done
+//	fi
+//EOD;
+//
+//	$start = "{$stop}\n";
+//	 if (($statusb_mon_config['enable_led2']) && ($statusb_mon_config['iface_led2']))
+//		 $start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led2']), 2, true) . "\n";
+//	 if (($statusb_mon_config['enable_led3']) && ($statusb_mon_config['iface_led3']))
+//		 $start .= "\t" . statusb_mon_launch(convert_friendly_interface_to_real_interface_name($statusb_mon_config['iface_led3']), 3, true) . "\n";
 
 	write_rcfile(array(
 		'file' => 'statusb_mon.sh',
-		'start' => $start,
-		'stop' => $stop)
+		'start' => '/usr/local/bin/statusb_mon.py',
+		'stop' => '/usr/local/bin/kill -9 `cat /var/run/statusb_mon.pid`')
 	);
 }
 
