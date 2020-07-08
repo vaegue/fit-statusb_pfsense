@@ -25,7 +25,9 @@ import serial
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--log', help='set logging.level (debug, info ...)', type=str)
-parser.add_argument('-lf', '--logfile', help='logfile', type=str)
+parser.add_argument('-f', '--logfile', help='logfile', type=str)
+parser.add_argument('-s', '--socketfile', help='socket file to poll for info', type=str)
+parser.add_argument('-d', '--device', help='serial device (default: /dev/cuaU0', type=str)
 args = parser.parse_args()
 if args.log:
     logpart = args.log
@@ -51,7 +53,14 @@ else:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
 
 # define serial device.
-serialdev = '/dev/cuaU0'
+if args.device:
+    if os.path.exists(args.device):
+        serialdev = args.device
+    else:
+        raise SystemExit(f'Could not find serial device: {args.device}')
+else:
+    serialdev = '/dev/cuaU0'
+
 serialargs = dict(
     port=serialdev,
     baudrate=115200,
@@ -102,16 +111,26 @@ except Exception as msg:
     logging.warning(f'Cannot open pid file: {pidfile}\n\t{msg}')
     raise SystemExit
 
-# Path to dpinger socket file
 # TODO: What to do about multiple WANs?
 # TODO: What if gateway changes?
-if os.path.exists('./sock_test.sock'):
-    sockpath = ['./sock_test.sock']
+
+# Try using user-supplied socket file. If that doesn't exist, try psuedosock file (created by the pseudosock test script
+# If neither of those work out. Search for dpinger socket.
+if args.socketfile:
+    sockpath = [args.socketfile]
+    if os.path.exists(sockpath[0]):
+        logging.info(f'Using user passed socket: {sockpath[0]}')
+    else:
+        logging.warning(f'socket ({sockpath[0]}) does not exist.')
+elif os.path.exists('/var/run/pseudsock.sock'):
+    sockpath = ['/var/run/pseudsock.sock']
     logging.info(f'using debug/test socket {sockpath[0]}')
 else:
     sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
     logging.info(f'Found dpinger socket: {sockpath[0]}')
 
+
+# TODO: add initial debug dump 'somewhere'
 
 # Forgive me. I'm learning =)
 class FitStatUSB:
@@ -165,8 +184,8 @@ class FitStatUSB:
         self.ser.timeout = self.ttyargs['timeout']
         try:
             self.ser.open()
-        except Exception as msg:
-            logging.warning(f'Could not open serial port: {self.ttyargs["port"]}\n{msg}')
+        except Exception as emsg:
+            logging.warning(f'Could not open serial port: {self.ttyargs["port"]}\n{emsg}')
             return
         # Send binary of command string
         self.ser.write(self.cmdstring.encode())
