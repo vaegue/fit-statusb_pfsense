@@ -14,7 +14,7 @@ COMMENT=	pfSense package statusb_mon
 LICENSE=	APACHE20
 
 RUN_DEPENDS=	${LOCALBASE}/bin/dpinger:net/dpinger \
-				${LOCALBASE}/lib/python3.7/site-packages/serial/serialposix.py:comms/py-serial
+				${LOCALBASE}/lib/python3.7/site-packages/serial/serialposix.py:comms/py-serial@${PY_FLAVOR}
 
 NO_BUILD=	yes
 NO_MTREE=	yes
@@ -30,13 +30,13 @@ do-install:
 	${MKDIR} ${STAGEDIR}${PREFIX}/pkg
 	${MKDIR} ${STAGEDIR}/etc/inc/priv
 	${MKDIR} ${STAGEDIR}${DATADIR}
-	${INSTALL_DATA} -m 0644 ${FILESDIR}${PREFIX}/pkg/statusb_mon.xml \
+	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.xml \
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
 		${STAGEDIR}${PREFIX}/pkg
-	${INSTALL} -m 0755 ${FILESDIR}${PREFIX}/bin/statusb_mon.py \
+	${INSTALL_SCRIPT} ${FILESDIR}${PREFIX}/bin/statusb_mon.py \
 		${STAGEDIR}${PREFIX}/bin
-	${INSTALL} -m 0755 ${FILESDIR}${PREFIX}/bin/pseudosock.py \
+	${INSTALL_SCRIPT} ${FILESDIR}${PREFIX}/bin/pseudosock.py \
 		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
 		${STAGEDIR}${PREFIX}/bin
