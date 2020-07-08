@@ -21,3 +21,4 @@ The script currently functions (pfSense 2.4.5), but it is ugly.
     
 - no graceful error handling (good LUCK!)
 - requires pyserial, which should be pulled in as a dependancy
+- requires dpinger, which is installed on pfSense by default, but should also be pulled in as a dependancy if you aren't using this on pfSense
