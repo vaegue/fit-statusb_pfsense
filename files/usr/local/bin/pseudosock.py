@@ -8,29 +8,51 @@
 # Run script with '[pythonexe] pseudosock.py [ up, down, updown, off, on, steady {percent}, flat {percent}, {percent} ]
 # example on pfSense: python3.7 pseudosock.py updown
 
-import socket
-import sys
+import argparse
+import logging
 import os
 import random
+import socket
+import sys
 
-if (len(sys.argv) >= 2):
-    arg = sys.argv[1]
-    sarg = None
-    print(arg)
-    if (arg is ('steady' or 'flat')):
-        sarg = 50
-        if (len(sys.argv) == 3):
-            sarg = int(sys.argv[2])
+
+parser = argparse.ArgumentParser(
+    description='This script creates a unix socket file with simulated output similar to dpinger socket')
+parser.add_argument('pattern', nargs='+', type=str,
+                    help='up, down, updown, off, on, steady {percent}, flat {percent}, {percent}')
+parser.add_argument('-s', '--sockfile', default='/var/run/pseudosock.sock', type=str,
+                    help='Socket file to create (defaults to /var/run/pseudosock.sock')
+args = parser.parse_args()
+if args.sockfile:
+    sockfile = args.sockfile
 else:
-    raise SystemExit('Invalid arguments.\n Valid options [ up, down, updown, off, on, steady {percent}, flat {percent}, {percent} ]')
+    sockfile = '/var/run/pseudosock.sock'
 
-sockfile = './sock_test.sock'
+logging.basicConfig(format='%(levelname)s:\t%(message)s', level=logging.DEBUG)
 
+if args.pattern:
+    logging.debug('pattern called')
+    if isinstance(args.pattern, str):
+        logging.debug('string')
+        arg = args.pattern
+        sarg = None
+        logging.info(arg)
+    elif isinstance(args.pattern, list):
+        logging.debug(f'list {args.pattern}')
+        arg = str(args.pattern[0])
+        sarg = None
+        if ((arg == 'steady') or (arg == 'flat')):
+            logging.debug('steadyflat?')
+            sarg = 50
+            if (len(args.pattern) == 2):
+                sarg = int(args.pattern[1])
+    else:
+        raise SystemExit('Invalid arguments.\nValid options [ up, down, updown, off, on, steady {percent}, flat {percent}, {percent} ]')
 
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+# def eprint(*args, **kwargs):
+#     print(*args, file=sys.stderr, **kwargs)
 
-
+# Clean potentially stale sockfile
 try:
     os.unlink(sockfile)
 except OSError:
@@ -39,7 +61,7 @@ except OSError:
 
 sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-eprint(f'starting up on {sockfile}')
+logging.info(f'starting up on {sockfile}')
 
 sock.bind(sockfile)
 sock.listen(1)
@@ -48,16 +70,22 @@ count = 0
 
 # Generator for testing against loss trends
 def downgen(pattern: str = 'updown', perc: int = None):
+    logging.debug(f'pattern = {pattern}, perc = {perc}')
     if (perc is not None):
         title = f'{pattern} {str(perc)}'
     else:
         title = pattern
-    print(f'----------------\n{title}\n----------------')
+    logging.info('----------------')
+    logging.info(title)
+    logging.info('----------------')
     # I know. I also don't care.
     # OUTPUT: Invalid argument (updown).
     if (pattern == 'updown'):
         # UP
-        print('----------------\nTREND UP\n----------------')
+        logging.debug('UPDOWN')
+        logging.info('----------------')
+        logging.info('TREND UP')
+        logging.info('----------------')
         stp = 100
         stpm = stp - 5
         retvar = 100
@@ -68,13 +96,16 @@ def downgen(pattern: str = 'updown', perc: int = None):
                 yield (0)
             else:
                 yield (retvar)
-
-        print('----------------\n15 at 0\n----------------')
+        logging.info('----------------')
+        logging.info('15 at 0')
+        logging.info('----------------')
         for i in range(0, 15):
             yield (0)
 
         # DOWN
-        print('----------------\nTREND DN\n----------------')
+        logging.info('----------------')
+        logging.info('TREND DN')
+        logging.info('----------------')
         stp = 0
         stpm = stp + 5
         retvar = 0
@@ -85,12 +116,14 @@ def downgen(pattern: str = 'updown', perc: int = None):
                 yield (100)
             else:
                 yield (retvar)
-
-    print('----------------\n15 at 100\n----------------')
-    for i in range(0, 15):
-        yield (100)
+        logging.info('----------------')
+        logging.info('15 at 100')
+        logging.info('----------------')
+        for i in range(0, 15):
+            yield (100)
 
     if (pattern == 'down'):
+        logging.debug('DOWN')
         stp = 0
         stpm = stp + 5
         retvar = 0
@@ -102,6 +135,7 @@ def downgen(pattern: str = 'updown', perc: int = None):
             else:
                 yield (retvar)
     elif (pattern == 'up'):
+        logging.debug('UP')
         stp = 100
         stpm = stp - 5
         retvar = 100
@@ -113,6 +147,7 @@ def downgen(pattern: str = 'updown', perc: int = None):
             else:
                 yield (retvar)
     elif (pattern == 'steady'):
+        logging.debug('STEADY')
         stp = perc
         while True:
             choice = random.choice([1, -1, 0, 0])
@@ -124,6 +159,7 @@ def downgen(pattern: str = 'updown', perc: int = None):
             elif (retvar < 0):
                 yield (0)
     elif (pattern.isnumeric()):
+        logging.debug('ISNUMERIC')
         yield (int(pattern))
     else:
         # this seems to fix weird exit with 'updown'
@@ -132,7 +168,8 @@ def downgen(pattern: str = 'updown', perc: int = None):
 
 try:
     while True:
-        eprint('Waiting for connection')
+        logging.info('Waiting for connection')
+        logging.debug(f'arg = {arg}, sarg = {sarg}')
         while True:
             for loss in downgen(arg, sarg):
                 count = count + 1
@@ -142,9 +179,9 @@ try:
                 # WAN_DHCP 1168 613 0
                 message = f'WAN_DHCP 1234 567 {loss}'
                 # eprint(f'sending {message}')
-                eprint(f'loss: {loss} ({count})')
+                logging.info(f'loss: {loss} ({count})')
                 connection.sendall(message.encode())
                 connection.close()
 finally:
     os.unlink(sockfile)
-    print(f'cleaning up {sockfile}')
+    logging.info(f'cleaning up {sockfile}')
