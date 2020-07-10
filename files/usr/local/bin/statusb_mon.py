@@ -12,13 +12,12 @@
 # TODO: make configurable?
 # TODO: handle more than one fit device (need to buy another one)
 
-import os
-import time
-import socket
+import argparse
 import glob
 import logging
-import argparse
-
+import os
+import socket
+import time
 from collections import deque
 
 import serial
@@ -148,7 +147,7 @@ class FitStatUSB:
         # TODO: get color from device 'G' command
         # This returns the last color that was SENT to the device.
         # This has no clue what the device is actually set to.
-        return(self.color)
+        return (self.color)
 
     def getid(self):
         # TODO: get ID from device '?' command
@@ -156,7 +155,7 @@ class FitStatUSB:
         # we don't interface with some other device that might have wound up on
         # the port we think the fit device is on.
         self.fit_id = "123dummy123"
-        return(self.fit_id)
+        return (self.fit_id)
 
     def setcolor(self, color: str):
         # Moved tihs check outside of class
@@ -170,7 +169,7 @@ class FitStatUSB:
 
     def sendcmd(self, cmd: str):
         self.cmd = cmd
-        self.cmdstring = self.cmd+'\n'
+        self.cmdstring = self.cmd + '\n'
         # Setup serial connection
         self.ser = serial.Serial()
         if os.path.exists(self.ttyargs['port']):
@@ -198,7 +197,7 @@ class FitStatUSB:
         return
 
     def setfade(self, dur: int):
-        self.dur = 'F'+str(dur)
+        self.dur = 'F' + str(dur)
         self.sendcmd(self.dur)
         logging.debug(f'setfade: {self.dur}')
         return
@@ -238,7 +237,7 @@ try:
                     if (len(diff_log) > 6):
                         diff_log.popleft()
 
-                    ave_diff = sum(diff_log)/len(diff_log)
+                    ave_diff = sum(diff_log) / len(diff_log)
                     if (dping_loss > 0):
                         msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
                         logging.info(msg)
@@ -278,7 +277,7 @@ try:
                 logging.error(msg)
                 continue
         finally:
-            if(sockcon):
+            if (sockcon):
                 logging.debug(f'Closing connection {sockpath}')
                 sockcon.close()
 
