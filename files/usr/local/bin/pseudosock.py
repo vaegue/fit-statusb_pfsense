@@ -13,8 +13,9 @@ import logging
 import os
 import random
 import socket
-import sys
 
+
+logging.basicConfig(format='%(levelname)s:\t%(message)s', level=logging.INFO)
 
 parser = argparse.ArgumentParser(
     description='This script creates a unix socket file with simulated output similar to dpinger socket')
@@ -28,7 +29,6 @@ if args.sockfile:
 else:
     sockfile = '/var/run/pseudosock.sock'
 
-logging.basicConfig(format='%(levelname)s:\t%(message)s', level=logging.DEBUG)
 
 if args.pattern:
     logging.debug('pattern called')
