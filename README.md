@@ -10,7 +10,7 @@ The script currently sort of functions (pfSense 2.4.5), but it is ugly.
 - User has to either clone it into pfSense's FreeBSD-ports or manually place the files for now
     - On FreeBSD dev box
         - `git clone https://github.com/pfsense/FreeBSD-ports.git`
-        - `cd {PFS_FBSD_PORTD_DIR}/sysutils/`
+        - `cd {PFS_FBSD_PORTS_DIR}/sysutils/`
         - `git clone https://github.com/vaegue/fit-statusb_pfsense.git pfSense-pkg-statusb_mon`
         - `cd pfSense-pkg-statusb_mon`
         - `git checkout plugin`
