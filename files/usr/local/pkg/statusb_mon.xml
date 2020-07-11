@@ -36,7 +36,8 @@
 	<service>
 		<name>statusb_mon</name>
 		<rcfile>statusb_mon.sh</rcfile>
-		<executable>statusb_mon.py</executable>
+<!--		FIXME: Need to find a better way to check running status-->
+		<custom_php_service_status_command>mwexec(&quot;/bin/test -f /var/run/statusb_mon.pid&quot;) == 1</custom_php_service_status_command>
 		<description>WAN status LED Daemon</description>
 	</service>
 	<fields>
@@ -44,23 +45,8 @@
 			<fielddescr>Enable statusb_mon</fielddescr>
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
-			<enablefields>enable_mon</enablefields>
-			<description>Description.</description>
 		</field>
-		<field>
-			<fielddescr>Field Desc</fielddescr>
-			<fieldname>enable_mon</fieldname>
-			<type>checkbox</type>
-		</field>
-		<!-- <field>
-			<fielddescr>Enable field 3</fielddescr>
-			<fieldname>enable_field3</fieldname>
-			<type>checkbox</type>
-		</field> -->
 	</fields>
-	<!-- <custom_php_validation_command>
-		validate_form_statusb_mon($_POST, $input_errors);
-	</custom_php_validation_command> -->
 	<custom_php_resync_config_command>
 		sync_package_statusb_mon();
 	</custom_php_resync_config_command>
