@@ -28,7 +28,7 @@ function statusb_mon_rcfile() {
 	write_rcfile(array(
 		'file' => 'statusb_mon.sh',
 		'start' => '/usr/local/bin/statusb_mon.py &',
-		'stop' => 'kill -2 `cat /var/run/statusb_mon.pid`')
+		'stop' => 'kill -s INT `cat /var/run/statusb_mon.pid`')
 	);
 }
 
