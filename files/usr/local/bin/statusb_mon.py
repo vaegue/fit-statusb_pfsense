@@ -16,13 +16,12 @@ import argparse
 import glob
 import logging
 import os
-from signal import signal, SIGINT
 import socket
 import time
 from collections import deque
+from signal import signal, SIGINT
 
 import serial
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--loglevel', help='set logging.level (debug, info ...)', type=str)
@@ -109,8 +108,10 @@ pidfile = '/var/run/statusb_mon.pid'
 
 
 def sighandler(sig_received, frame):
-    os.unlink(pidfile)
-    raise SystemExit('SIGINT handled')
+    if os.path.exists(pidfile):
+        os.unlink(pidfile)
+        logging.info(f'{sig_received} received\nFrame: {frame}\nRemoving pidfile: {pidfile}\n')
+    raise SystemExit(0)
 
 
 signal(SIGINT, sighandler)
@@ -119,7 +120,7 @@ try:
     open(pidfile, 'w').write(pid)
 except Exception as msg:
     logging.warning(f'Cannot open pid file: {pidfile}\n\t{msg}')
-    raise SystemExit
+    raise SystemExit(1)
 
 # TODO: What to do about multiple WANs?
 # TODO: What if gateway changes?
@@ -298,6 +299,7 @@ except Exception as msg:
     else:
         logging.error(msg)
 finally:
-    logging.info(f'\nRemoving pidfile: {pidfile}\n')
     if os.path.exists(pidfile):
+        logging.info(f'\nRemoving pidfile: {pidfile}\n')
         os.unlink(pidfile)
+        raise SystemExit(0)
