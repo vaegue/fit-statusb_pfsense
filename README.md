@@ -1,12 +1,12 @@
-Dirty hack. Work in progress. _don't hurt me, I'm learning._<br>
+Dirty hack. Work in progress. _don't hurt me, I'm learning._<br />
 Hopefully the start of a working [fit-statusb](https://fit-iot.com/web/product/fit-statusb/) plugin(ish) for pfSense.
 
 This is the first time I've interacted with FreeBSD ports. I may have done something horribly wrong.
 Use this at your own risk.
 
-The script currently functions (pfSense 2.4.5), but it is ugly.
+The script currently sort of functions (pfSense 2.4.5), but it is ugly.
 - Starts by itself, but system can't seem to shut it down or restart
-- UI non-functional (WIP)
+- UI non-functional (WIP I suck at php)
 - User has to either clone it into pfSense's FreeBSD-ports or manually place the files for now
     - On FreeBSD dev box
         - `git clone https://github.com/pfsense/FreeBSD-ports.git`
