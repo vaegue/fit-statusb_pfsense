@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE packagegui SYSTEM "../schema/packages.dtd">
+<?xml-stylesheet type="text/xsl" href="../xsl/package.xsl"?>
+<packagegui>
+	<copyright>
+	<![CDATA[
+/*
+ * statusb_mon.xml
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2009-2020 Rubicon Communications, LLC (Netgate)
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+	]]>
+	</copyright>
+	<title>StatUSB Mon</title>
+	<name>statusb_mon</name>
+	<include_file>/usr/local/pkg/statusb_mon.inc</include_file>
+	<menu>
+		<name>statusb_mon</name>
+		<section>Services</section>
+		<url>/pkg_edit.php?xml=statusb_mon.xml</url>
+	</menu>
+	<service>
+		<name>statusb_mon</name>
+		<rcfile>statusb_mon.sh</rcfile>
+<!--		FIXME: Need to find a better way to check running status-->
+		<custom_php_service_status_command>mwexec(&quot;/bin/test -f /var/run/statusb_mon.pid&quot;) == 0;</custom_php_service_status_command>
+		<description>WAN status LED Daemon</description>
+	</service>
+	<fields>
+		<field>
+			<fielddescr>Enable statusb_mon</fielddescr>
+			<fieldname>enable</fieldname>
+			<type>checkbox</type>
+		</field>
+	</fields>
+	<custom_php_resync_config_command>
+		sync_package_statusb_mon();
+	</custom_php_resync_config_command>
+</packagegui>

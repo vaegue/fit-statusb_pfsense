@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<pfsensepkgs>
+	<package>
+		<name>statusb_mon</name>
+		<descr><![CDATA[Allows you to use FIT StatUSB LED to display WAN status]]></descr>
+		<version>%%PKGVERSION%%</version>
+		<configurationfile>statusb_mon.xml</configurationfile>
+		<pkginfolink>https://www.github.com/vaegue/fit-statusb_pfsense</pkginfolink>
+		<website>https://www.github.com/vaegue/fit-statusb_pfsense</website>
+	</package>
+</pfsensepkgs>
