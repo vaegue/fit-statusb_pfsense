@@ -39,7 +39,7 @@ do-install:
 	${INSTALL_SCRIPT} ${FILESDIR}${PREFIX}/bin/pseudosock.py \
 		${STAGEDIR}${PREFIX}/bin
 	${INSTALL_DATA} ${FILESDIR}${PREFIX}/pkg/statusb_mon.inc \
-		${STAGEDIR}${PREFIX}/bin
+		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/statusb_mon.priv.inc \
 		${STAGEDIR}/etc/inc/priv
 	${INSTALL_DATA} ${FILESDIR}${DATADIR}/info.xml \
