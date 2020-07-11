@@ -5,7 +5,7 @@ This is the first time I've interacted with FreeBSD ports. I may have done somet
 Use this at your own risk.
 
 The script currently sort of functions (pfSense 2.4.5), but it is ugly.
-- Starts by itself, but system can't seem to shut it down or restart
+- Seems to start and stop correctly (needs more testing)
 - UI non-functional (WIP I suck at php)
 - User has to either clone it into pfSense's FreeBSD-ports or manually place the files for now
     - On FreeBSD dev box
