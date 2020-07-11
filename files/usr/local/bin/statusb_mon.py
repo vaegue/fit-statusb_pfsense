@@ -23,7 +23,7 @@ from collections import deque
 import serial
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-l', '--log', help='set logging.level (debug, info ...)', type=str)
+parser.add_argument('-l', '--loglevel', help='set logging.level (debug, info ...)', type=str)
 parser.add_argument('-f', '--logfile', help='logfile', type=str)
 parser.add_argument('-s', '--socketfile', help='socket file to poll for info', type=str)
 parser.add_argument('-d', '--device', help='serial device (default: /dev/cuaU0', type=str)
