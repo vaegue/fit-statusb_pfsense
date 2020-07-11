@@ -16,11 +16,13 @@ import argparse
 import glob
 import logging
 import os
+from signal import signal, SIGINT
 import socket
 import time
 from collections import deque
 
 import serial
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--loglevel', help='set logging.level (debug, info ...)', type=str)
@@ -28,8 +30,8 @@ parser.add_argument('-f', '--logfile', help='logfile', type=str)
 parser.add_argument('-s', '--socketfile', help='socket file to poll for info', type=str)
 parser.add_argument('-d', '--device', help='serial device (default: /dev/cuaU0', type=str)
 args = parser.parse_args()
-if args.log:
-    logpart = args.log
+if args.loglevel:
+    logpart = args.loglevel
     # print(f'Loglevel set to {logpart.upper()}')
 else:
     logpart = 'ERROR'
@@ -104,6 +106,15 @@ low_thresh = 0
 
 pid = str(os.getpid())
 pidfile = '/var/run/statusb_mon.pid'
+
+
+def sighandler(sig_received, frame):
+    os.unlink(pidfile)
+    raise SystemExit('SIGINT handled')
+
+
+signal(SIGINT, sighandler)
+
 try:
     open(pidfile, 'w').write(pid)
 except Exception as msg:
@@ -287,5 +298,6 @@ except Exception as msg:
     else:
         logging.error(msg)
 finally:
-    logging.info(f'Removing pidfile: {pidfile}')
-    os.unlink(pidfile)
+    logging.info(f'\nRemoving pidfile: {pidfile}\n')
+    if os.path.exists(pidfile):
+        os.unlink(pidfile)
