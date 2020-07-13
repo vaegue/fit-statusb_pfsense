@@ -12,6 +12,7 @@ COMMENT=	pfSense package statusb_mon
 
 LICENSE=	APACHE20
 
+# Not sure how to correctly set the python dependency. This /seems/ to work
 RUN_DEPENDS=	${LOCALBASE}/bin/dpinger:net/dpinger \
 		${LOCALBASE}/lib/python3.7/site-packages/serial/__init__.py:comms/py-serial
 
