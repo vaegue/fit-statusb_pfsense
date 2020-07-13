@@ -3,6 +3,7 @@ pkg/statusb_mon.inc
 bin/statusb_mon.py
 bin/pseudosock.py
 /etc/inc/priv/statusb_mon.priv.inc
+etc/statusb_mon-config.yaml
 %%DATADIR%%/info.xml
 @dir /etc/inc
 @dir /etc/inc/priv

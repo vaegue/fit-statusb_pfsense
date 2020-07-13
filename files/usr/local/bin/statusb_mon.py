@@ -14,6 +14,7 @@
 
 import argparse
 import glob
+import yaml
 import logging
 import os
 import socket
@@ -22,12 +23,24 @@ from collections import deque
 
 import serial
 
+# TODO: Clean up argparse stuff
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--log', help='set logging.level (debug, info ...)', type=str)
 parser.add_argument('-f', '--logfile', help='logfile', type=str)
 parser.add_argument('-s', '--socketfile', help='socket file to poll for info', type=str)
-parser.add_argument('-d', '--device', help='serial device (default: /dev/cuaU0', type=str)
+parser.add_argument('-d', '--device', help='serial device (default: /dev/cuaU0)', type=str)
+parser.add_argument('-c', '--config', help='specificy config file (default: /usr/local/etc/status_mon-config.yaml)', type=str)
 args = parser.parse_args()
+
+default_config_file = '/usr/local/etc/statusb_mon-config.yaml'
+# TODO: reorganize logging and argument setup
+if args.config:
+    # TODO: Import config file
+    config_file = args.config
+    print(f'Using {args.config} as config file')
+else:
+    config_file = default_config_file
+
 if args.log:
     logpart = args.log
     # print(f'Loglevel set to {logpart.upper()}')
@@ -94,13 +107,15 @@ duration = 1000
 sensitivity = .5
 sockcon = None
 # Startup assuming 100 percent loss
-prev_loss = 100
-diff_log = deque([])
-ave_diff = 0
 # Loss threshholds for full-up/down
 # fixme: does not work as intended
 high_thresh = 100
 low_thresh = 0
+
+# Queue for last several loss diffs for avaeraging
+diff_log = deque([])
+prev_loss = 100
+ave_diff = 0
 
 pid = str(os.getpid())
 pidfile = '/var/run/statusb_mon.pid'

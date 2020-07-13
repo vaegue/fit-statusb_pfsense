@@ -14,7 +14,9 @@ COMMENT=	pfSense package statusb_mon
 LICENSE=	APACHE20
 
 RUN_DEPENDS=	${LOCALBASE}/bin/dpinger:net/dpinger \
-				${LOCALBASE}/lib/python3.7/site-packages/serial/serialposix.py:comms/py-serial@${PY_FLAVOR}
+				${LOCALBASE}/lib/python3.7/site-packages/serial/__init__.py:comms/py-serial@${PY_FLAVOR}
+				${LOCALBASE}/lib/python3.7/site-packages/devel/yaml/__init__.py:devel/py-yaml
+
 
 NO_BUILD=	yes
 NO_MTREE=	yes
@@ -42,6 +44,8 @@ do-install:
 		${STAGEDIR}${PREFIX}/pkg
 	${INSTALL_DATA} ${FILESDIR}/etc/inc/priv/statusb_mon.priv.inc \
 		${STAGEDIR}/etc/inc/priv
+	${INSTALL_DATA} ${FILESDIR}${PREFIX}/etc/statusb_mon-config.yaml \
+		${STAGEDIR}${PREFIX}/etc
 	${INSTALL_DATA} ${FILESDIR}${DATADIR}/info.xml \
 		${STAGEDIR}${DATADIR}
 	@${REINPLACE_CMD} -i '' -e "s|%%PKGVERSION%%|${PKGVERSION}|" \
