@@ -23,15 +23,10 @@ require_once("functions.inc");
 
 function statusb_mon_rcfile() {
 	global $config;
+	/* The underscore in statusb_mon gets stripped when it's field is written into config.xml */
 	$statusb_mon_config = $config['installedpackages']['statusbmon']['config'][0];
 	print($statusb_mon_config);
-//    write_rcfile(array(
-//        'file' => 'statusb_mon.sh',
-//        'start' => '/usr/local/bin/statusb_mon.py -l DEBUG -f /usr/log/statusb_mon.log &',
-//        'stop' => 'kill -s INT `cat /var/run/statusb_mon.pid`')
-//    );
-
-//	TODO: potential arguments to script
+    /*	TODO: potential arguments to script */
     if (!($statusb_mon_config['enable_logging'])) {
         write_rcfile(array(
             'file' => 'statusb_mon.sh',
@@ -52,6 +47,7 @@ function sync_package_statusb_mon() {
 
 	statusb_mon_rcfile();
 
+    /* The underscore in statusb_mon gets stripped when it's field is written into config.xml */
 	$statusb_mon_config = $config['installedpackages']['statusbmon']['config'][0];
 	/* If the service (being) disabled, stop it (if running) and do nothing else */
 	if (!($statusb_mon_config['enable'])) {
