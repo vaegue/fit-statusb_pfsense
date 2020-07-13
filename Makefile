@@ -2,7 +2,6 @@
 
 PORTNAME=	pfSense-pkg-statusb_mon
 PORTVERSION=	0.1
-PORTREVISION=	1
 CATEGORIES=	sysutils
 MASTER_SITES=	# empty
 DISTFILES=	# empty
