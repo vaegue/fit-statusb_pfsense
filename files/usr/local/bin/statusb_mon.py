@@ -38,6 +38,11 @@ if args.config:
     # TODO: Import config file
     config_file = args.config
     print(f'Using {args.config} as config file')
+    if os.path.exists(args.config):
+        with open(args.config) as file:
+            config_contents = yaml.full_load(file)
+    else:
+        raise SystemExit(f'Can not find config file: {args.config}')
 else:
     config_file = default_config_file
 
@@ -73,49 +78,7 @@ if args.device:
 else:
     serialdev = '/dev/cuaU0'
 
-serialargs = dict(
-    port=serialdev,
-    baudrate=115200,
-    parity=serial.PARITY_NONE,
-    stopbits=serial.STOPBITS_ONE,
-    timeout=1
-)
-
-# fixme: organize these
-pulse = '100'
-# Purely for ease of typing
-red = '#FF0000'
-green = '#00FF00'
-blue = '#0000FF'
-yellow = '#FF4100'
-orange = '#E00A00'
-black = '#000000'
-white = '#FFFFFF'
-teal = '#00903F'
-fuscia = '#FF0044'
-purple = '#700070'
-
-colorseq = dict(
-    down=f'B{yellow}-{pulse}{red}',
-    up=f'B{yellow}-{pulse}{green}',
-    steady=f'B{teal}-{pulse}{yellow}'
-)
-
-# Some defaults
-pollinterval = 1
-duration = 1000
-sensitivity = .5
-sockcon = None
-# Startup assuming 100 percent loss
-# Loss threshholds for full-up/down
-# fixme: does not work as intended
-high_thresh = 100
-low_thresh = 0
-
-# Queue for last several loss diffs for avaeraging
 diff_log = deque([])
-prev_loss = 100
-ave_diff = 0
 
 pid = str(os.getpid())
 pidfile = '/var/run/statusb_mon.pid'

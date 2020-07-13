@@ -1,1 +1,46 @@
-# Placeholder
+serialargs:
+ - port: 'serialdev'
+ - baudrate: '115200'
+ - parity: 'serial.PARITY_NONE'
+ - stopbits: 'serial.STOPBITS_ONE'
+ - timeout: 1
+
+
+# fixme: organize these
+pulse: &pulse '100'
+# Purely for ease of typing
+# Basic colors
+red: &red '#FF0000'
+green: &green '#00FF00'
+blue: &blue '#0000FF'
+yellow: &yellow '#FF4100'
+orange: &orange '#E00A00'
+black: &black '#000000'
+white: &white '#FFFFFF'
+teal: &teal '#00903F'
+fuscia: &fuscia '#FF0044'
+purple: &purple '#700070'
+
+# Color Sequences. Fade between colors
+# This probably won't work right, since it's made of variables that probably don't get evaluated
+colorseq:
+ - down: 'B*yellow-*pulse*red'
+ - up: 'B*yellow-*pulse*green'
+ - steady: 'B*teal-*pulse*yellow'
+
+
+# Some defaults
+pollinterval: 1
+duration: 1000
+sensitivity: .5
+sockcon: None
+# Startup assuming 100 percent loss
+# Loss threshholds for full-up/down
+# fixme: does not work as intended
+high_thresh: 100
+low_thresh: 0
+
+# Queue for last several loss diffs for avaeraging
+#diff_log: deque([])
+prev_loss: 100
+ave_diff: 0
