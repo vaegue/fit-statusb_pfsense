@@ -49,8 +49,10 @@ if not isinstance(num_loglevel, int):
 
 if logfile is not None:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel, filename=logfile)
+    logging.info(f'logging {logpart.upper()} to logfile: {logfile}')
 else:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
+    logging.info(f'Showint output at {logpart.upper()} or higher.')
 
 # define serial device.
 if args.device:
