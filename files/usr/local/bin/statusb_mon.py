@@ -52,7 +52,7 @@ if logfile is not None:
     logging.info(f'logging {logpart.upper()} to logfile: {logfile}')
 else:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
-    logging.info(f'Showint output at {logpart.upper()} or higher.')
+    logging.info(f'Showing output at {logpart.upper()} or higher.')
 
 # define serial device.
 if args.device:
