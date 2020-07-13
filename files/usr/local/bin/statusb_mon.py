@@ -52,7 +52,10 @@ if logfile is not None:
     logging.info(f'logging {logpart.upper()} to logfile: {logfile}')
 else:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
-    logging.info(f'Showint output at {logpart.upper()} or higher.')
+    logging.info(f'Showing output at {logpart.upper()} or higher.')
+
+
+logging.info(time.strftime('%c', time.gmtime()))
 
 # define serial device.
 if args.device:
@@ -111,8 +114,9 @@ pidfile = '/var/run/statusb_mon.pid'
 
 def sighandler(sig_received, frame):
     if os.path.exists(pidfile):
+        logging.info(f'\n---\nSignal {sig_received} received. Shutting down.\n---\n')
         os.unlink(pidfile)
-        logging.info(f'{sig_received} received\nFrame: {frame}\nRemoving pidfile: {pidfile}\n')
+        logging.info(f'Removing pidfile: {pidfile}\n')
     raise SystemExit(0)
 
 
