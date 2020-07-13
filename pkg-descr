@@ -1,3 +1,6 @@
 Control FIT StatUSB device based on WAN status reported by dpinger
 FIT StatUSB is a 'cheap' LED blinky that can be controlled with simple serial commands
 Device info can be found here: https://fit-iot.com/web/product/fit-statusb/
+
+WWW: https://github.com/vaegue/fit-statusb_pfsense
+WWW: https://fit-iot.com/web/product/fit-statusb/
