@@ -46,6 +46,11 @@
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
 		</field>
+		<field>
+			<fielddescr>Enable logging</fielddescr>
+			<fieldname>enable_logging</fieldname>
+			<type>checkbox</type>
+		</field>
 	</fields>
 	<custom_php_resync_config_command>
 		sync_package_statusb_mon();
