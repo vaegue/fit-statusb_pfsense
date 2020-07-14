@@ -6,7 +6,7 @@ Use this at your own risk.
 
 The script currently sort of functions (pfSense 2.4.5), but it is ugly.
 - Seems to start and stop correctly (needs more testing)
-- UI non-functional (WIP I suck at php)
+- Minimal UI (enable/disable service and service with logging /var/log/statusb_mon.log)
 - User has to either clone it into pfSense's FreeBSD-ports or manually place the files for now
     - On FreeBSD dev box
         - `git clone https://github.com/pfsense/FreeBSD-ports.git`
