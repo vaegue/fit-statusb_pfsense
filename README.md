@@ -13,7 +13,6 @@ The script currently sort of functions (pfSense 2.4.5), but it is ugly.
         - `cd {PFS_FBSD_PORTS_DIR}/sysutils/`
         - `git clone https://github.com/vaegue/fit-statusb_pfsense.git pfSense-pkg-statusb_mon`
         - `cd pfSense-pkg-statusb_mon`
-        - `git checkout plugin`
         - `make package`
         - `scp work/pkg/pfSense-pkg-statusb_mon* root@{firewall_ip}:/root`
     - On Firewall
