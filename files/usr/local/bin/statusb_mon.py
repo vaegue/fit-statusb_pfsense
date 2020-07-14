@@ -23,11 +23,14 @@ from signal import signal, SIGINT
 
 import serial
 
+__version__ = "0.5.0"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--loglevel', help='set logging.level (debug, info ...)', type=str)
 parser.add_argument('-f', '--logfile', help='logfile', type=str)
 parser.add_argument('-s', '--socketfile', help='socket file to poll for info', type=str)
 parser.add_argument('-d', '--device', help='serial device (default: /dev/cuaU0', type=str)
+parser.add_argument('-v', '--version', action='version',  version=f'%(prog)s {__version__}')
 args = parser.parse_args()
 if args.loglevel:
     logpart = args.loglevel
