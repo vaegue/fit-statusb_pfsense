@@ -25,7 +25,6 @@ function statusb_mon_rcfile() {
 	global $config;
 	/* The underscore in statusb_mon gets stripped when it's field is written into config.xml */
 	$statusb_mon_config = $config['installedpackages']['statusbmon']['config'][0];
-	print($statusb_mon_config);
     /*	TODO: potential arguments to script */
     if (!($statusb_mon_config['enable_logging'])) {
         write_rcfile(array(
