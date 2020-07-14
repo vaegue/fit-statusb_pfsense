@@ -21,6 +21,16 @@
 require_once("config.inc");
 require_once("functions.inc");
 
+/* modified from is_process_running */
+function is_statusb_running($process_arg) {
+	$output = "";
+	if (!empty($process_arg)) {
+		exec("/bin/pgrep -afn " . escapeshellarg($process_arg), $output, $retval);
+		return (intval($retval) == 0);
+	}
+	return false;
+}
+
 function statusb_mon_rcfile() {
 	global $config;
 	/* The underscore in statusb_mon gets stripped when it's field is written into config.xml */
@@ -30,13 +40,13 @@ function statusb_mon_rcfile() {
         write_rcfile(array(
             'file' => 'statusb_mon.sh',
             'start' => '/usr/local/bin/statusb_mon.py &',
-            'stop' => 'kill -s INT `cat /var/run/statusb_mon.pid`')
+            'stop' => 'kill -s INT `pgrep -afn statusb_mon.py`')
         );
     } else {
         write_rcfile(array(
             'file' => 'statusb_mon.sh',
             'start' => '/usr/local/bin/statusb_mon.py -l DEBUG -f /var/log/statusb_mon.log &',
-            'stop' => 'kill -s INT `cat /var/run/statusb_mon.pid`')
+            'stop' => 'kill -s INT `pgrep -afn statusb_mon.py`')
         );
     }
 }
@@ -50,13 +60,13 @@ function sync_package_statusb_mon() {
 	$statusb_mon_config = $config['installedpackages']['statusbmon']['config'][0];
 	/* If the service (being) disabled, stop it (if running) and do nothing else */
 	if (!($statusb_mon_config['enable'])) {
-		if (is_process_running("statusb_mon.py")) {
+		if (is_statusb_running("statusb_mon.py")) {
 			stop_service("statusb_mon");
 		}
 		return;
 	}
 	/* Kill all instances of statusb_mon */
-	if (is_process_running("statusb_mon.py")) {
+	if (is_statusb_running("statusb_mon.py")) {
 		stop_service("statusb_mon");
 	}
 	start_service("statusb_mon");
