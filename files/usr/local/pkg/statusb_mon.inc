@@ -26,11 +26,19 @@ function statusb_mon_rcfile() {
 	/* The underscore in statusb_mon gets stripped when it's field is written into config.xml */
 	$statusb_mon_config = $config['installedpackages']['statusbmon']['config'][0];
     /*	TODO: potential arguments to script */
-	write_rcfile(array(
-		'file' => 'statusb_mon.sh',
-		'start' => '/usr/local/bin/statusb_mon.py &',
-		'stop' => 'kill -s INT `cat /var/run/statusb_mon.pid`')
-	);
+    if (!($statusb_mon_config['enable_logging'])) {
+        write_rcfile(array(
+            'file' => 'statusb_mon.sh',
+            'start' => '/usr/local/bin/statusb_mon.py &',
+            'stop' => 'kill -s INT `cat /var/run/statusb_mon.pid`')
+        );
+    } else {
+        write_rcfile(array(
+            'file' => 'statusb_mon.sh',
+            'start' => '/usr/local/bin/statusb_mon.py -l DEBUG -f /var/log/statusb_mon.log &',
+            'stop' => 'kill -s INT `cat /var/run/statusb_mon.pid`')
+        );
+    }
 }
 
 function sync_package_statusb_mon() {
