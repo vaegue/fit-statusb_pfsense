@@ -36,7 +36,7 @@
 	<service>
 		<name>statusb_mon</name>
 		<rcfile>statusb_mon.sh</rcfile>
-		<custom_php_service_status_command>is_statusb_running("statusb_mon.py") == 0;</custom_php_service_status_command>
+		<custom_php_service_status_command>mwexec("pgrep -afn statusb_mon.py") == 0;</custom_php_service_status_command>
 		<description>WAN status LED Daemon</description>
 	</service>
 	<fields>
