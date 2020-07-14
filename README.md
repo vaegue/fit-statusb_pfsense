@@ -16,9 +16,9 @@ The script currently sort of functions (pfSense 2.4.5), but it is ugly.
         - `make package`
         - `scp work/pkg/pfSense-pkg-statusb_mon* root@{firewall_ip}:/root`
     - On Firewall
+        - requires pyserial, `pkg install py37-serial`
         - `pkg add pfSense-pkg-statusb_mon*.txz`
     
 - no graceful error handling (good LUCK!)
 - pulling dependancies isn't working
-- requires pyserial, `pkg install py37-serial` ~~which should be pulled in as a dependancy~~
 - requires dpinger, which is installed on pfSense by default, ~~but should also be pulled in as a dependancy if you aren't using this on pfSense~~
