@@ -23,7 +23,7 @@ from signal import signal, SIGINT
 
 import serial
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--loglevel', help='set logging.level (debug, info ...)', type=str)
