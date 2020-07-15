@@ -40,9 +40,6 @@ else:
 
 if args.logfile:
     logfile = args.logfile
-    # print(f'Logging to file: {logfile}')
-    logpart = 'INFO'
-    # print(f'Loglevel set to {logpart.upper()}')
 else:
     logfile = None
 
@@ -142,8 +139,8 @@ if args.socketfile:
         logging.info(f'Using user passed socket: {sockpath[0]}')
     else:
         logging.warning(f'socket ({sockpath[0]}) does not exist.')
-elif os.path.exists('/var/run/pseudsock.sock'):
-    sockpath = ['/var/run/pseudsock.sock']
+elif os.path.exists('/var/run/pseudosock.sock'):
+    sockpath = ['/var/run/pseudosock.sock']
     logging.info(f'using debug/test socket {sockpath[0]}')
 else:
     sockpath = glob.glob('/var/run/dpinger_WAN_DHCP*.sock')
@@ -186,6 +183,15 @@ class FitStatUSB:
         logging.info(f'Setcolor: {color}')
         self.color = color
         self.sendcmd(color)
+        return
+
+    def pulse(self, dur: int):
+        cur_color = self.getcolor()
+        # self.setfade(1)
+        self.setcolor(purple)
+        time.sleep(.5)
+        self.setcolor(cur_color)
+        # self.setfade(self.dur)
         return
 
     def sendcmd(self, cmd: str):
@@ -259,6 +265,13 @@ try:
                         diff_log.popleft()
 
                     ave_diff = sum(diff_log) / len(diff_log)
+                    logging.debug(f'Count: {count}')
+
+                    if (str(logpart.lower()) == 'debug'):
+                        if ((str(count)[-1] == '0') and (logpart.lower() == 'debug')):
+                            logging.debug(f'PULSE: {count} - {duration}')
+                            fit.pulse(duration)
+
                     if (dping_loss > 0):
                         msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
                         logging.info(msg)
