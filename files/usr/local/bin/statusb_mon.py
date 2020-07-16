@@ -186,13 +186,11 @@ class FitStatUSB:
         self.sendcmd(color)
         return
 
-    def pulse(self, dur: int):
+    def pulse(self):
         cur_color = self.getcolor()
-        # self.setfade(1)
         self.setcolor(purple)
-        time.sleep(.5)
+        time.sleep(1)
         self.setcolor(cur_color)
-        # self.setfade(self.dur)
         return
 
     def sendcmd(self, cmd: str):
@@ -271,7 +269,7 @@ try:
                     if (str(logpart.lower()) == 'debug'):
                         if ((str(count)[-1] == '0') and (logpart.lower() == 'debug')):
                             logging.debug(f'PULSE: {count} - {duration}')
-                            fit.pulse(duration)
+                            fit.pulse()
 
                     if (dping_loss > 0):
                         msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
