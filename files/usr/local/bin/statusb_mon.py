@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.7
 #
+# statusb_mon.py v%%PKGVERSION%%
 # Monitor and control script to utilize fit-statusb device on pfSense.
 # Initially to monitor 'loss' from dpinger, and give simple visual
 # indiciator of WAN status.
@@ -23,7 +24,7 @@ from signal import signal, SIGINT
 
 import serial
 
-__version__ = "0.6.0"
+__version__ = "%%PKGVERSION%%"
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', '--loglevel', help='set logging.level (debug, info ...)', type=str)
