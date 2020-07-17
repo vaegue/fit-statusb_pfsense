@@ -39,22 +39,16 @@ if args.loglevel:
 else:
     logpart = 'ERROR'
 
-if args.logfile:
-    logfile = args.logfile
-else:
-    logfile = None
-
 num_loglevel = getattr(logging, logpart.upper(), None)
 if not isinstance(num_loglevel, int):
     raise ValueError(f'Invalid log level: {logpart.upper()}')
 
-if logfile is not None:
-    logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel, filename=logfile)
+if args.logfile:
+    logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel, filename=args.logfile)
     logging.info(f'logging {logpart.upper()} to logfile: {logfile}')
 else:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
     logging.info(f'Showing output at {logpart.upper()} or higher.')
-
 
 logging.info(time.strftime('%c', time.gmtime()))
 
