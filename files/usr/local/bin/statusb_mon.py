@@ -57,7 +57,8 @@ if args.device:
     if os.path.exists(args.device):
         serialdev = args.device
     else:
-        raise SystemExit(f'Could not find serial device: {args.device}')
+        logging.warning(f'Could not find serial device: {args.device}')
+        raise SystemExit(1)
 else:
     serialdev = '/dev/cuaU0'
 
@@ -110,8 +111,9 @@ pidfile = '/var/run/statusb_mon.pid'
 def sighandler(sig_received, frame):
     if os.path.exists(pidfile):
         logging.info(f'\n---\nSignal {sig_received} received. Shutting down.\n---\n')
-        os.unlink(pidfile)
-        logging.info(f'Removing pidfile: {pidfile}\n')
+        if os.path.exists(pidfile):
+            os.unlink(pidfile)
+            logging.info(f'Removing pidfile: {pidfile}\n')
     raise SystemExit(0)
 
 
@@ -317,4 +319,4 @@ finally:
     if os.path.exists(pidfile):
         logging.info(f'\nRemoving pidfile: {pidfile}\n')
         os.unlink(pidfile)
-        raise SystemExit(0)
+    raise SystemExit(0)
