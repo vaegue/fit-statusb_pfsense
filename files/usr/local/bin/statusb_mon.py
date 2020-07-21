@@ -45,7 +45,7 @@ if not isinstance(num_loglevel, int):
 
 if args.logfile:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel, filename=args.logfile)
-    logging.info(f'logging {logpart.upper()} to logfile: {logfile}')
+    logging.info(f'logging {logpart.upper()} to logfile: {args.logfile}')
 else:
     logging.basicConfig(format='%(levelname)s:\t%(message)s', level=num_loglevel)
     logging.info(f'Showing output at {logpart.upper()} or higher.')
@@ -104,8 +104,7 @@ ave_diff = 0
 high_thresh = 100
 low_thresh = 0
 
-pid = str(os.getpid())
-pidfile = '/var/run/statusb_mon.pid'
+reset_on_loop = None
 
 
 def sighandler(sig_received, frame):
@@ -118,6 +117,9 @@ def sighandler(sig_received, frame):
 
 
 signal(SIGINT, sighandler)
+
+pid = str(os.getpid())
+pidfile = '/var/run/statusb_mon.pid'
 
 try:
     open(pidfile, 'w').write(pid)
@@ -173,21 +175,29 @@ class FitStatUSB:
         return (self.fit_id)
 
     def setcolor(self, color: str):
-        # Moved tihs check outside of class
-        # if (color == self.color):
-        #     return
-        # else:
         logging.info(f'Setcolor: {color}')
         self.color = color
-        self.sendcmd(color)
-        return
+        try:
+            self.sendcmd(color)
+        except ValueError:
+            logging.warning(f'Unable to set color: {color} on {self.ttyargs["port"]}')
+            raise ValueError
+            # return(1)
+        return(0)
 
     def pulse(self):
-        cur_color = self.getcolor()
-        self.setcolor(purple)
-        time.sleep(1)
-        self.setcolor(cur_color)
-        return
+        # This doesn't actually pulse the LED. it sets the LED without manipulatig cur_color so it gets set right back
+        # to cur_color in the main loop.
+        # cur_color = self.getcolor()
+
+        try:
+            self.setcolor(purple)
+            # time.sleep(2)
+            # self.setcolor(cur_color)
+        except Exception as msg:
+            logging.warning(f'Unable to pulse LED.\n{msg}')
+            raise ValueError
+        return(0)
 
     def sendcmd(self, cmd: str):
         self.cmd = cmd
@@ -198,7 +208,7 @@ class FitStatUSB:
             self.ser.port = self.ttyargs['port']
         else:
             logging.warning(f'Serial port not found: {self.ttyargs["port"]}')
-            return
+            raise ValueError
         self.ser.parity = self.ttyargs['parity']
         self.ser.baudrate = self.ttyargs['baudrate']
         self.ser.stopbits = self.ttyargs['stopbits']
@@ -207,7 +217,7 @@ class FitStatUSB:
             self.ser.open()
         except Exception as emsg:
             logging.warning(f'Could not open serial port: {self.ttyargs["port"]}\n{emsg}')
-            return
+            raise ValueError
         # Send binary of command string
         self.ser.write(self.cmdstring.encode())
         # flush for stability
@@ -216,13 +226,13 @@ class FitStatUSB:
         # This seems to clear the input buffer so it doesn't freeze up
         self.ser.read_all()
         self.ser.close()
-        return
+        return(0)
 
     def setfade(self, dur: int):
         self.dur = 'F' + str(dur)
         self.sendcmd(self.dur)
         logging.debug(f'setfade: {self.dur}')
-        return
+        return(0)
 
 
 count = 0
@@ -231,6 +241,7 @@ fit = FitStatUSB(serialargs, duration)
 try:
     while True:
         time.sleep(pollinterval)
+        logging.debug(f' - SLEEP ({pollinterval})')
 
         # This try doesn't 'feel' right
         try:
@@ -262,10 +273,13 @@ try:
                     ave_diff = sum(diff_log) / len(diff_log)
                     logging.debug(f'Count: {count}')
 
+                    # Send purple to the LED for a short time for visual verification it's still working during debug
                     if (str(logpart.lower()) == 'debug'):
                         if ((str(count)[-1] == '0') and (logpart.lower() == 'debug')):
                             logging.debug(f'PULSE: {count} - {duration}')
                             fit.pulse()
+                            time.sleep(1)
+                            logging.debug(f' - SLEEP (1)')
 
                     if (dping_loss > 0):
                         msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
@@ -290,8 +304,12 @@ try:
                         logging.warning(f'======== CODE FUSCIA! ========\n{msg}')
                         setcolor = fuscia
 
-                    if (setcolor != fit.getcolor()):
-                        fit.setcolor(setcolor)
+                    if ((setcolor != fit.getcolor()) or (reset_on_loop is True)):
+                        try:
+                            fit.setcolor(setcolor)
+                        except ValueError as msg:
+                            logging.debug('Setting reset_on_loop to catch up serial device if it comes back.')
+                            reset_on_loop = True
 
                 else:
                     # No data, move along
