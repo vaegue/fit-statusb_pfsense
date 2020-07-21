@@ -166,14 +166,13 @@ def downgen(pattern: str = 'updown', perc: int = None):
         yield (100)
 
 
-try:
+while True:
+    logging.info('Waiting for connection')
+    logging.debug(f'arg = {arg}, sarg = {sarg}')
     while True:
-        logging.info('Waiting for connection')
-        logging.debug(f'arg = {arg}, sarg = {sarg}')
-        while True:
-            for loss in downgen(arg, sarg):
-                count = count + 1
-
+        for loss in downgen(arg, sarg):
+            count = count + 1
+            try:
                 connection, client = sock.accept()
                 # eprint(f'connection from {client}')
                 # WAN_DHCP 1168 613 0
@@ -182,6 +181,10 @@ try:
                 logging.info(f'loss: {loss} ({count})')
                 connection.sendall(message.encode())
                 connection.close()
-finally:
-    os.unlink(sockfile)
-    logging.info(f'cleaning up {sockfile}')
+
+            except BrokenPipeError as msg:
+                logging.warning(f'Broken Pipe\n{msg}')
+                continue
+            finally:
+                os.unlink(sockfile)
+                logging.info(f'cleaning up {sockfile}')
