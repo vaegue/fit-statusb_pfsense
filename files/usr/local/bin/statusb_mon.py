@@ -87,7 +87,8 @@ purple = '#700070'
 colorseq = dict(
     down=f'B{yellow}-{pulse}{red}',
     up=f'B{yellow}-{pulse}{green}',
-    steady=f'B{teal}-{pulse}{yellow}'
+    steady=f'B{teal}-{pulse}{yellow}',
+    end=f'B{blue}-{pulse}{purple}'
 )
 
 # Some defaults
@@ -337,4 +338,9 @@ finally:
     if os.path.exists(pidfile):
         logging.info(f'\nRemoving pidfile: {pidfile}\n')
         os.unlink(pidfile)
+    time.sleep(1)
+    try:
+        fit.setcolor(colorseq['end'])
+    except Exception:
+        logging.warning('Could not set exit color')
     raise SystemExit(0)
