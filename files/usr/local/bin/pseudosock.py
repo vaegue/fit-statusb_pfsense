@@ -93,7 +93,7 @@ def downgen(pattern: str = 'updown', perc: int = None):
             retvar = stp = random.randint(stpm, stp)
             stpm = stp - 5
             if retvar < 0:
-                yield (0)
+                yield 0
             else:
                 yield retvar
         logging.info('----------------')
@@ -113,7 +113,7 @@ def downgen(pattern: str = 'updown', perc: int = None):
             retvar = stp = random.randint(stp, stpm)
             stpm = stp + 5
             if retvar > 100:
-                yield (100)
+                yield 100
             else:
                 yield retvar
         logging.info('----------------')
@@ -157,7 +157,7 @@ def downgen(pattern: str = 'updown', perc: int = None):
             elif retvar > 100:
                 yield 100
             elif retvar < 0:
-                yield (0)
+                yield 0
     elif pattern.isnumeric():
         logging.debug('ISNUMERIC')
         yield int(pattern)
