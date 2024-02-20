@@ -24,6 +24,11 @@ parser.add_argument('pattern', nargs='+', type=str,
 parser.add_argument('-s', '--sockfile', default='/var/run/pseudosock.sock', type=str,
                     help='Socket file to create (defaults to /var/run/pseudosock.sock')
 args = parser.parse_args()
+
+# Initialize these.
+arg = None
+sarg = None
+
 if args.sockfile:
     sockfile = args.sockfile
 else:
