@@ -41,10 +41,10 @@ if args.pattern:
         logging.debug(f'list {args.pattern}')
         arg = str(args.pattern[0])
         sarg = None
-        if ((arg == 'steady') or (arg == 'flat')):
+        if (arg == 'steady') or (arg == 'flat'):
             logging.debug('steadyflat?')
             sarg = 50
-            if (len(args.pattern) == 2):
+            if len(args.pattern) == 2:
                 sarg = int(args.pattern[1])
     else:
         raise SystemExit('Invalid arguments.\nValid options [ up, down, updown, off, on, steady {percent}, flat {percent}, {percent} ]')
@@ -71,7 +71,7 @@ count = 0
 # Generator for testing against loss trends
 def downgen(pattern: str = 'updown', perc: int = None):
     logging.debug(f'pattern = {pattern}, perc = {perc}')
-    if (perc is not None):
+    if perc is not None:
         title = f'{pattern} {str(perc)}'
     else:
         title = pattern
@@ -80,7 +80,7 @@ def downgen(pattern: str = 'updown', perc: int = None):
     logging.info('----------------')
     # I know. I also don't care.
     # OUTPUT: Invalid argument (updown).
-    if (pattern == 'updown'):
+    if pattern == 'updown':
         # UP
         logging.debug('UPDOWN')
         logging.info('----------------')
@@ -89,18 +89,18 @@ def downgen(pattern: str = 'updown', perc: int = None):
         stp = 100
         stpm = stp - 5
         retvar = 100
-        while (retvar > 0):
+        while retvar > 0:
             retvar = stp = random.randint(stpm, stp)
             stpm = stp - 5
-            if (retvar < 0):
+            if retvar < 0:
                 yield (0)
             else:
-                yield (retvar)
+                yield retvar
         logging.info('----------------')
         logging.info('15 at 0')
         logging.info('----------------')
         for i in range(0, 15):
-            yield (0)
+            yield 0
 
         # DOWN
         logging.info('----------------')
@@ -109,61 +109,61 @@ def downgen(pattern: str = 'updown', perc: int = None):
         stp = 0
         stpm = stp + 5
         retvar = 0
-        while (retvar < 100):
+        while retvar < 100:
             retvar = stp = random.randint(stp, stpm)
             stpm = stp + 5
-            if (retvar > 100):
+            if retvar > 100:
                 yield (100)
             else:
-                yield (retvar)
+                yield retvar
         logging.info('----------------')
         logging.info('15 at 100')
         logging.info('----------------')
         for i in range(0, 15):
-            yield (100)
+            yield 100
 
-    if (pattern == 'down'):
+    if pattern == 'down':
         logging.debug('DOWN')
         stp = 0
         stpm = stp + 5
         retvar = 0
-        while (retvar < 100):
+        while retvar < 100:
             retvar = stp = random.randint(stp, stpm)
             stpm = stp + 5
-            if (retvar > 100):
-                yield (100)
+            if retvar > 100:
+                yield 100
             else:
-                yield (retvar)
-    elif (pattern == 'up'):
+                yield retvar
+    elif pattern == 'up':
         logging.debug('UP')
         stp = 100
         stpm = stp - 5
         retvar = 100
-        while (retvar > 0):
+        while retvar > 0:
             retvar = stp = random.randint(stpm, stp)
             stpm = stp - 5
-            if (retvar < 0):
-                yield (0)
+            if retvar < 0:
+                yield 0
             else:
-                yield (retvar)
-    elif (pattern == 'steady'):
+                yield retvar
+    elif pattern == 'steady':
         logging.debug('STEADY')
         stp = perc
         while True:
             choice = random.choice([1, -1, 0, 0])
             retvar = stp + choice
-            if (retvar > 0 or retvar < 100):
-                yield (retvar)
-            elif (retvar > 100):
-                yield (100)
-            elif (retvar < 0):
+            if retvar > 0 or retvar < 100:
+                yield retvar
+            elif retvar > 100:
+                yield 100
+            elif retvar < 0:
                 yield (0)
-    elif (pattern.isnumeric()):
+    elif pattern.isnumeric():
         logging.debug('ISNUMERIC')
-        yield (int(pattern))
+        yield int(pattern)
     else:
         # this seems to fix weird exit with 'updown'
-        yield (100)
+        yield 100
 
 
 while True:

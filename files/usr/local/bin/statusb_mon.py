@@ -31,7 +31,7 @@ parser.add_argument('-l', '--loglevel', help='set logging.level (debug, info ...
 parser.add_argument('-f', '--logfile', help='logfile', type=str)
 parser.add_argument('-s', '--socketfile', help='socket file to poll for info', type=str)
 parser.add_argument('-d', '--device', help='serial device (default: /dev/cuaU0)', type=str)
-parser.add_argument('-v', '--version', action='version',  version=f'%(prog)s {__version__}')
+parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
 args = parser.parse_args()
 if args.loglevel:
     logpart = args.loglevel
@@ -165,7 +165,7 @@ class FitStatUSB:
         # TODO: get color from device 'G' command
         # This returns the last color that was SENT to the device.
         # This has no clue what the device is actually set to.
-        return (self.color)
+        return self.color
 
     def getid(self):
         # TODO: get ID from device '?' command
@@ -173,7 +173,7 @@ class FitStatUSB:
         # we don't interface with some other device that might have wound up on
         # the port we think the fit device is on.
         self.fit_id = "123dummy123"
-        return (self.fit_id)
+        return self.fit_id
 
     def setcolor(self, color: str):
         logging.info(f'Setcolor: {color}')
@@ -184,7 +184,7 @@ class FitStatUSB:
             logging.warning(f'Unable to set color: {color} on {self.ttyargs["port"]}')
             raise ValueError
             # return(1)
-        return(0)
+        return 0
 
     def pulse(self):
         # This doesn't actually pulse the LED. it sets the LED without manipulatig cur_color so it gets set right back
@@ -198,7 +198,7 @@ class FitStatUSB:
         except Exception as msg:
             logging.warning(f'Unable to pulse LED.\n{msg}')
             raise ValueError
-        return(0)
+        return 0
 
     def sendcmd(self, cmd: str):
         self.cmd = cmd
@@ -227,13 +227,13 @@ class FitStatUSB:
         # This seems to clear the input buffer so it doesn't freeze up
         self.ser.read_all()
         self.ser.close()
-        return(0)
+        return 0
 
     def setfade(self, dur: int):
         self.dur = 'F' + str(dur)
         self.sendcmd(self.dur)
         logging.debug(f'setfade: {self.dur}')
-        return(0)
+        return 0
 
 
 count = 0
@@ -268,34 +268,35 @@ try:
                     cur_diff = prev_loss - dping_loss
                     prev_loss = dping_loss
                     diff_log.append(cur_diff)
-                    if (len(diff_log) > 6):
+                    if len(diff_log) > 6:
                         diff_log.popleft()
 
                     ave_diff = sum(diff_log) / len(diff_log)
                     logging.debug(f'Count: {count}')
 
                     # Send purple to the LED for a short time for visual verification it's still working during debug
-                    if (str(logpart.lower()) == 'debug'):
-                        if ((str(count)[-1] == '0') and (logpart.lower() == 'debug')):
+                    if str(logpart.lower()) == 'debug':
+                        if (str(count)[-1] == '0') and (logpart.lower() == 'debug'):
                             logging.debug(f'PULSE: {count} - {duration}')
                             fit.pulse()
                             time.sleep(1)
                             logging.debug(f' - SLEEP (1)')
 
-                    if (dping_loss > 0):
+                    if dping_loss > 0:
                         msg = f"loss: {dping_res['loss']}\tcur_diff: {cur_diff}\tave_diff: {ave_diff} ({count})"
                         logging.info(msg)
 
                     setcolor = None
-                    if (ave_diff >= sensitivity):
+                    if ave_diff >= sensitivity:
                         setcolor = colorseq['up']
-                    elif (ave_diff <= -sensitivity):
+                    elif ave_diff <= -sensitivity:
                         setcolor = colorseq['down']
-                    elif ((ave_diff == 0) and (dping_loss <= low_thresh)):
+                    elif (ave_diff == 0) and (dping_loss <= low_thresh):
                         setcolor = green
-                    elif ((ave_diff == 0) and (dping_loss >= high_thresh)):
+                    elif (ave_diff == 0) and (dping_loss >= high_thresh):
                         setcolor = red
-                    elif ((-sensitivity < ave_diff < sensitivity) and (dping_loss < high_thresh or dping_loss > low_thresh)):
+                    elif ((-sensitivity < ave_diff < sensitivity) and (
+                            dping_loss < high_thresh or dping_loss > low_thresh)):
                         setcolor = colorseq['steady']
                     else:  # Dunno!
                         msg = f'ave_diff: {ave_diff}\n' \
@@ -305,7 +306,7 @@ try:
                         logging.warning(f'======== CODE FUSCIA! ========\n{msg}')
                         setcolor = fuscia
 
-                    if ((setcolor != fit.getcolor()) or (reset_on_loop is True)):
+                    if (setcolor != fit.getcolor()) or (reset_on_loop is True):
                         try:
                             fit.setcolor(setcolor)
                         except ValueError as msg:
@@ -325,7 +326,7 @@ try:
                 logging.error(msg)
                 continue
         finally:
-            if (sockcon):
+            if sockcon:
                 logging.debug(f'Closing connection {sockpath}')
                 sockcon.close()
 
